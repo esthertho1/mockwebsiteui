@@ -12,7 +12,7 @@ export default function Home() {
         <p className="text-sm text-zinc-600 mb-8">
           Choose a flow version to get started.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center">
           <Link
             href="/v0"
             className="inline-flex h-12 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 transition"
@@ -21,13 +21,19 @@ export default function Home() {
           </Link>
           <Link
             href="/v1"
-            className="inline-flex h-12 items-center justify-center rounded-xl bg-corePurple px-6 text-sm font-semibold text-white shadow-sm hover:bg-violet transition"
+            className="inline-flex h-12 items-center justify-center rounded-xl border border-zinc-200 bg-white px-6 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 transition"
           >
             v1 — Full flow
           </Link>
+          <Link
+            href="/v2"
+            className="inline-flex h-12 items-center justify-center rounded-xl bg-corePurple px-6 text-sm font-semibold text-white shadow-sm hover:bg-violet transition"
+          >
+            v2 — New
+          </Link>
         </div>
         <p className="mt-6 text-xs text-zinc-500">
-          v0: Role selection only. v1: Role + JD upload/paste + preview.
+          v0: Engineer type → industry → skills. v1: Role + JD. v2: New flow to customize.
         </p>
       </div>
     </div>

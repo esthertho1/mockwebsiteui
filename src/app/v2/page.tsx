@@ -53,25 +53,6 @@ function IconSearch(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function IconClock(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M10 17a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M10 6v4l2.5 1.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function IconDocument(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
@@ -99,7 +80,7 @@ function RolePill({ label }: { label: string }) {
   );
 }
 
-export default function CreateTestV1() {
+export default function CreateTestV2() {
   const router = useRouter();
   const [query, setQuery] = React.useState("");
   const [selectedRoleId, setSelectedRoleId] = React.useState<string>(
@@ -108,9 +89,48 @@ export default function CreateTestV1() {
   const [jdFile, setJdFile] = React.useState<File | null>(null);
   const [jdPastedText, setJdPastedText] = React.useState("");
   const [jdModalOpen, setJdModalOpen] = React.useState(false);
+  const [experienceLevel, setExperienceLevel] = React.useState<string>("Intermediate");
+  const [extraSkills, setExtraSkills] = React.useState<string[]>([]);
+  const [skillSearch, setSkillSearch] = React.useState("");
+  const [skillDropdownOpen, setSkillDropdownOpen] = React.useState(false);
+  const skillInputRef = React.useRef<HTMLDivElement | null>(null);
+
   const jdFileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   const hasJd = jdFile !== null || jdPastedText.trim().length > 0;
+
+  const EXPERIENCE_LEVELS = ["Beginner", "Intermediate", "Advanced"];
+
+  const allSkillOptions = React.useMemo(() => {
+    const set = new Set<string>();
+    ROLES.forEach((r) => r.skills.forEach((s) => set.add(s)));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, []);
+
+  const filteredSkillOptions = React.useMemo(() => {
+    const q = skillSearch.trim().toLowerCase();
+    if (!q) return allSkillOptions.slice(0, 6);
+    return allSkillOptions
+      .filter((s) => s.toLowerCase().includes(q))
+      .slice(0, 8);
+  }, [allSkillOptions, skillSearch]);
+
+  const addExtraSkill = (skill: string) => {
+    if (extraSkills.includes(skill)) return;
+    setExtraSkills((prev) => [...prev, skill]);
+    setSkillSearch("");
+    setSkillDropdownOpen(false);
+  };
+
+  React.useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (skillInputRef.current && !skillInputRef.current.contains(e.target as Node)) {
+        setSkillDropdownOpen(false);
+      }
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
 
   React.useEffect(() => {
     if (!jdModalOpen) return;
@@ -147,7 +167,7 @@ export default function CreateTestV1() {
             <span className="text-lg leading-none">×</span>
           </Link>
           <div className="font-fustat text-lg font-semibold text-graphite">
-            Create Test <span className="ml-2 text-xs font-normal text-zinc-400">v1</span>
+            Create Test <span className="ml-2 text-xs font-normal text-zinc-400">v2</span>
           </div>
           <div className="ml-auto" />
         </header>
@@ -284,6 +304,45 @@ export default function CreateTestV1() {
               ) : null}
             </div>
 
+            <div className="mt-4 border-t border-zinc-100 pt-4">
+              <label className="block text-sm font-medium text-zinc-700 mb-2">
+                Experience level
+              </label>
+              <div className="flex flex-wrap gap-4" role="radiogroup" aria-label="Experience level">
+                {EXPERIENCE_LEVELS.map((level) => {
+                  const selected = experienceLevel === level;
+                  return (
+                    <label
+                      key={level}
+                      className="flex cursor-pointer items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900"
+                    >
+                      <span
+                        className={[
+                          "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition",
+                          selected
+                            ? "border-zinc-400 bg-white"
+                            : "border-zinc-300 bg-white",
+                        ].join(" ")}
+                      >
+                        {selected ? (
+                          <span className="h-2 w-2 rounded-full bg-zinc-600" />
+                        ) : null}
+                      </span>
+                      <input
+                        type="radio"
+                        name="experienceLevel"
+                        value={level}
+                        checked={selected}
+                        onChange={() => setExperienceLevel(level)}
+                        className="sr-only"
+                      />
+                      {level}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="mt-4 space-y-3">
               {filteredRoles.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">
@@ -360,36 +419,133 @@ export default function CreateTestV1() {
               <div className="text-sm font-semibold text-zinc-900">
                 {selectedRole?.preview.testTitle ?? "Hiring Test"}
               </div>
-              <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500">
-                <IconClock className="h-4 w-4" />
-                <span>
+              <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 font-medium text-zinc-600">
                   {formatDuration(selectedRole?.preview.durationMinutes ?? 0)}
                 </span>
               </div>
 
               <div className="mt-4 space-y-3">
-                {(selectedRole?.preview.sections ?? []).map((section) => (
+                {(selectedRole?.preview.sections ?? []).map((section) => {
+                  const levelMatch = section.title.match(/\(([^)]+)\)\s*$/);
+                  const level = levelMatch?.[1] ?? null;
+                  const baseTitle = level
+                    ? section.title.replace(/\s*\([^)]+\)\s*$/, "").trim()
+                    : section.title;
+                  return (
+                    <div
+                      key={section.title}
+                      className="flex items-start gap-3 rounded-xl border border-zinc-100 bg-zinc-50 p-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-xs font-semibold text-zinc-900">
+                            {baseTitle}
+                          </span>
+                          {level ? (
+                            <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600">
+                              {level}
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="mt-0.5 text-xs text-zinc-600">
+                          {section.subtitle}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {extraSkills.map((skill) => (
                   <div
-                    key={section.title}
+                    key={skill}
                     className="flex items-start gap-3 rounded-xl border border-zinc-100 bg-zinc-50 p-3"
                   >
-                    <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-zinc-500 shadow-sm">
-                      <span className="text-[11px] font-semibold">Q</span>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-semibold text-zinc-900">
-                        {section.title}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-semibold text-zinc-900">
+                          {skill}
+                        </span>
+                        <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[11px] font-medium text-zinc-600">
+                          {experienceLevel}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExtraSkills((prev) => prev.filter((s) => s !== skill))
+                          }
+                          aria-label={`Remove ${skill}`}
+                          className="ml-1 text-zinc-400 hover:text-zinc-600"
+                        >
+                          ×
+                        </button>
                       </div>
-                      <div className="text-xs text-zinc-600">
-                        {section.subtitle}
+                      <div className="mt-0.5 text-xs text-zinc-600">
+                        1 question
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-5 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3 text-xs text-zinc-600">
-                You&apos;ll be able to edit this test in the next step
+              <div className="mt-4 border-t border-zinc-100 pt-4">
+                <div className="text-xs font-medium text-zinc-700 mb-2">
+                  Add more skills
+                </div>
+                <div ref={skillInputRef} className="relative">
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
+                      <IconSearch className="h-4 w-4" />
+                    </span>
+                    <input
+                      value={skillSearch}
+                      onChange={(e) => {
+                        setSkillSearch(e.target.value);
+                        setSkillDropdownOpen(true);
+                      }}
+                      onFocus={() => setSkillDropdownOpen(true)}
+                      placeholder="Search for a skill..."
+                      className="h-9 w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-zinc-300 focus:ring-2 focus:ring-violet/20"
+                    />
+                  </div>
+                  {skillDropdownOpen ? (
+                    <div className="absolute left-0 right-0 top-full z-10 mt-1 max-h-48 overflow-y-auto rounded-lg border border-zinc-200 bg-white shadow-lg">
+                      {filteredSkillOptions.length === 0 ? (
+                        <div className="px-3 py-3 text-xs text-zinc-500">
+                          No skills found
+                        </div>
+                      ) : (
+                        filteredSkillOptions
+                          .filter((s) => !extraSkills.includes(s))
+                          .map((skill) => (
+                            <button
+                              key={skill}
+                              type="button"
+                              onClick={() => addExtraSkill(skill)}
+                              className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                            >
+                              {skill}
+                              <span className="text-zinc-400">+</span>
+                            </button>
+                          ))
+                      )}
+                      {skillSearch.trim() &&
+                        !allSkillOptions.some(
+                          (s) =>
+                            s.toLowerCase() === skillSearch.trim().toLowerCase(),
+                        ) &&
+                        !extraSkills.includes(skillSearch.trim()) ? (
+                        <button
+                          type="button"
+                          onClick={() => addExtraSkill(skillSearch.trim())}
+                          className="flex w-full items-center justify-between border-t border-zinc-100 px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50"
+                        >
+                          Add &quot;{skillSearch.trim()}&quot;
+                          <span className="text-zinc-400">+</span>
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
           </aside>

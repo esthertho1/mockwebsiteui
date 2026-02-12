@@ -12,6 +12,7 @@ type Question = {
   type: string;
   timeMinutes: number;
   description: string;
+  options?: string[];
 };
 
 type SectionState = {
@@ -26,9 +27,40 @@ const QUESTION_TYPES = [
   "Multiple Choice",
   "Short Answer",
   "Coding",
+  "Voice",
+  "Simulation",
 ];
 
+const CUSTOM_QUESTION_TYPES = ["Multiple Choice", "Short Answer"];
+
 const QUESTION_LIBRARY: Question[] = [
+  {
+    id: "q-cad-dimensioning",
+    title: "Create a fully constrained sketch with proper dimensions",
+    skill: "CAD",
+    type: "Project (Generated)",
+    timeMinutes: 30,
+    description:
+      "Given a part outline, dimension the sketch using best practices for fully defining geometry. Explain your datum selection and constraint strategy.",
+  },
+  {
+    id: "q-cad-assembly",
+    title: "Design an assembly with proper mates and motion",
+    skill: "CAD",
+    type: "Short Answer",
+    timeMinutes: 25,
+    description:
+      "Describe how you would mate components in a multi-part assembly to achieve the intended motion. Include considerations for in-context design and external references.",
+  },
+  {
+    id: "q-cad-drawings",
+    title: "Generate production-ready drawing views and annotations",
+    skill: "CAD",
+    type: "Multiple Choice",
+    timeMinutes: 20,
+    description:
+      "A drawing needs orthographic views, section views, and detail callouts. Which view type is most appropriate for showing internal features of a hollow cylinder?",
+  },
   {
     id: "q-gdt-stackup",
     title: "Interpret a feature control frame and propose a datum scheme",
@@ -209,24 +241,188 @@ function IconCog(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function IconTrash(props: React.SVGProps<SVGSVGElement>) {
+function IconMultipleChoice(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
-      <path
-        d="M8 4.5h4M5.5 6.5h9M8 6.5v9m4-9v9M6.8 6.5l.6 10a1.5 1.5 0 0 0 1.5 1.4h2.2a1.5 1.5 0 0 0 1.5-1.4l.6-10"
+      <rect
+        x="3.5"
+        y="4.5"
+        width="5"
+        height="5"
+        rx="1"
         stroke="currentColor"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        strokeWidth="1.2"
+      />
+      <circle
+        cx="6"
+        cy="7"
+        r="0.75"
+        fill="currentColor"
+      />
+      <rect
+        x="3.5"
+        y="10.5"
+        width="5"
+        height="5"
+        rx="1"
+        stroke="currentColor"
+        strokeWidth="1.2"
       />
       <path
-        d="M7.5 4.5a2.5 2.5 0 0 1 5 0"
+        d="M11 7h5M11 13h5"
         stroke="currentColor"
-        strokeWidth="1.3"
+        strokeWidth="1.2"
         strokeLinecap="round"
       />
     </svg>
   );
+}
+
+function IconVoice(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M10 2v11"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.5 5.5v5a3.5 3.5 0 0 0 7 0v-5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4 9a6 6 0 0 0 12 0"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M10 14v3"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconSimulation(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M4 6v8l6 3 6-3V6l-6-3-6 3Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4 6l6 3 6-3M10 9v7"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconShortAnswer(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M4 6h12M4 10h9M4 14h6"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconCoding(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M6 7l-3 3 3 3M14 7l3 3-3 3M12 5l-4 10"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconProject(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <rect
+        x="4"
+        y="4"
+        width="12"
+        height="12"
+        rx="1.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <path
+        d="M7 8h6M7 11h4"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconPlay(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M7 5v10l8-5-8-5Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function IconPreview(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <path
+        d="M17.5 10c-1.5 3.5-4 5.5-7.5 5.5S4 13.5 2.5 10 4 4.5 7.5 4.5 10 6.5 11.5 10"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function QuestionTypeIcon({
+  type,
+  className,
+}: {
+  type: string;
+  className?: string;
+}) {
+  const t = type.toLowerCase();
+  if (t.includes("multiple choice")) return <IconMultipleChoice className={className} />;
+  if (t.includes("voice")) return <IconVoice className={className} />;
+  if (t.includes("simulation")) return <IconSimulation className={className} />;
+  if (t.includes("short answer")) return <IconShortAnswer className={className} />;
+  if (t.includes("coding")) return <IconCoding className={className} />;
+  if (t.includes("project")) return <IconProject className={className} />;
+  return null;
 }
 
 function ModalShell({
@@ -301,8 +497,32 @@ export default function TestDetailsPage() {
   const router = useRouter();
   const [openSection, setOpenSection] = React.useState<string | null>(null);
   const [addModalOpen, setAddModalOpen] = React.useState(false);
+  const [addDropdownOpen, setAddDropdownOpen] = React.useState(false);
+  const [sectionLibraryOpen, setSectionLibraryOpen] = React.useState<
+    string | null
+  >(null);
+  const [sectionLibraryQuery, setSectionLibraryQuery] = React.useState("");
+  const [sectionLibrarySkill, setSectionLibrarySkill] = React.useState<
+    string | null
+  >(null);
+  const [customQuestionModalOpen, setCustomQuestionModalOpen] =
+    React.useState(false);
+  const [customQuestion, setCustomQuestion] = React.useState({
+    title: "",
+    skills: [] as string[],
+    type: "Short Answer" as "Multiple Choice" | "Short Answer",
+    timeMinutes: 15,
+    description: "",
+    options: ["", ""] as string[],
+  });
+  const [customSkillQuery, setCustomSkillQuery] = React.useState("");
   const [detailsModal, setDetailsModal] = React.useState<Question | null>(null);
-  const [inviteModalOpen, setInviteModalOpen] = React.useState(false);
+  const [questionMenuOpen, setQuestionMenuOpen] = React.useState<string | null>(
+    null,
+  );
+  const [replaceTargetQuestionId, setReplaceTargetQuestionId] = React.useState<
+    string | null
+  >(null);
   const [published, setPublished] = React.useState(false);
 
   const [skillQuery, setSkillQuery] = React.useState("");
@@ -310,19 +530,14 @@ export default function TestDetailsPage() {
   const [selectedQuestionType, setSelectedQuestionType] = React.useState<
     string | null
   >(null);
-  const [selectedLibraryQuestionId, setSelectedLibraryQuestionId] =
-    React.useState<string | null>(null);
-  const [targetSectionId, setTargetSectionId] = React.useState<string | null>(
-    null,
-  );
 
-  const [inviteInput, setInviteInput] = React.useState("");
-  const [inviteEmails, setInviteEmails] = React.useState<string[]>([]);
-  const csvInputRef = React.useRef<HTMLInputElement | null>(null);
-  const [lastCsvImport, setLastCsvImport] = React.useState<{
-    fileName: string;
-    imported: number;
-  } | null>(null);
+  const [customDurationMinutes, setCustomDurationMinutes] = React.useState<
+    number | null
+  >(null);
+  const [durationEditMode, setDurationEditMode] = React.useState(false);
+  const [durationInputValue, setDurationInputValue] = React.useState("");
+
+  const [savedFeedback, setSavedFeedback] = React.useState(false);
 
   const role = React.useMemo(
     () => ROLES.find((r) => r.id === testId) ?? ROLES[0],
@@ -330,24 +545,25 @@ export default function TestDetailsPage() {
   );
 
   const invitesStorageKey = React.useMemo(() => `invites:${testId}`, [testId]);
+  const testDurationStorageKey = React.useMemo(
+    () => `test-duration:${testId}`,
+    [testId],
+  );
 
   React.useEffect(() => {
     if (!testId) return;
     try {
-      const raw = window.localStorage.getItem(invitesStorageKey);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        const emails = parsed
-          .map((x) => (typeof x === "string" ? x : ""))
-          .map((x) => x.trim())
-          .filter(Boolean);
-        setInviteEmails(emails);
+      const raw = window.localStorage.getItem(testDurationStorageKey);
+      if (raw !== null) {
+        const n = parseInt(raw, 10);
+        if (!Number.isNaN(n) && n > 0) {
+          setCustomDurationMinutes(n);
+        }
       }
     } catch {
       // ignore
     }
-  }, [invitesStorageKey, testId]);
+  }, [testId, testDurationStorageKey]);
 
   const [sections, setSections] = React.useState<SectionState[]>(() => {
     const base = role?.preview.sections ?? [];
@@ -374,6 +590,20 @@ export default function TestDetailsPage() {
   });
 
   React.useEffect(() => {
+    if (!testId) return;
+    try {
+      const raw = window.localStorage.getItem(`test-sections:${testId}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSections(parsed);
+          setOpenSection(null);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
     const base = role?.preview.sections ?? [];
     const total = role?.preview.durationMinutes ?? 0;
     setSections(
@@ -399,7 +629,46 @@ export default function TestDetailsPage() {
       }),
     );
     setOpenSection(null);
-  }, [role]);
+  }, [role, testId]);
+
+  const sectionsStorageKey = React.useMemo(
+    () => `test-sections:${testId}`,
+    [testId],
+  );
+
+  function saveTest() {
+    if (!testId) return;
+    try {
+      window.localStorage.setItem(
+        sectionsStorageKey,
+        JSON.stringify(sections),
+      );
+      const duration =
+        customDurationMinutes ??
+        sections.reduce(
+          (acc, s) =>
+            acc + s.questions.reduce((a, q) => a + q.timeMinutes, 0),
+          0,
+        );
+      window.localStorage.setItem(testDurationStorageKey, String(duration));
+      setSavedFeedback(true);
+      window.setTimeout(() => setSavedFeedback(false), 2000);
+    } catch {
+      // ignore
+    }
+  }
+
+  React.useEffect(() => {
+    if (!testId || sections.length === 0) return;
+    try {
+      window.localStorage.setItem(
+        sectionsStorageKey,
+        JSON.stringify(sections),
+      );
+    } catch {
+      // ignore
+    }
+  }, [sections, sectionsStorageKey, testId]);
 
   const allSkillOptions = React.useMemo(() => {
     const set = new Set<string>();
@@ -426,98 +695,43 @@ export default function TestDetailsPage() {
     });
   }, [selectedSkill, selectedQuestionType]);
 
+  const filteredCustomSkills = React.useMemo(() => {
+    const q = customSkillQuery.trim().toLowerCase();
+    const selected = customQuestion.skills;
+    return allSkillOptions
+      .filter(
+        (s) =>
+          (!q || s.toLowerCase().includes(q)) && !selected.includes(s),
+      )
+      .slice(0, 8);
+  }, [allSkillOptions, customSkillQuery, customQuestion.skills]);
+
+  const sectionLibraryQuestions = React.useMemo(() => {
+    const sq = sectionLibraryQuery.trim().toLowerCase();
+    const skill = sectionLibrarySkill?.toLowerCase() ?? "";
+    return QUESTION_LIBRARY.filter((q) => {
+      const qSkill = q.skill.toLowerCase();
+      const okSkill = skill
+        ? qSkill === skill || qSkill.includes(skill) || skill.includes(qSkill)
+        : true;
+      const okSearch =
+        !sq ||
+        q.title.toLowerCase().includes(sq) ||
+        q.description.toLowerCase().includes(sq);
+      return okSkill && okSearch;
+    });
+  }, [sectionLibraryQuery, sectionLibrarySkill]);
+
   function openAddModal() {
     setAddModalOpen(true);
     setSkillQuery("");
     setSelectedSkill(null);
     setSelectedQuestionType(null);
-    setSelectedLibraryQuestionId(null);
-    const fallbackSectionId = openSection ?? sections[0]?.id ?? null;
-    setTargetSectionId(fallbackSectionId);
-  }
-
-  function parseEmails(value: string) {
-    return value
-      .split(/[\n,;\t ]+/g)
-      .map((s) => s.trim())
-      .filter(Boolean);
-  }
-
-  function parseCsvLine(line: string) {
-    const out: string[] = [];
-    let cur = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        const next = line[i + 1];
-        if (inQuotes && next === '"') {
-          cur += '"';
-          i++;
-        } else {
-          inQuotes = !inQuotes;
-        }
-        continue;
-      }
-      if (ch === "," && !inQuotes) {
-        out.push(cur);
-        cur = "";
-        continue;
-      }
-      cur += ch;
-    }
-    out.push(cur);
-    return out.map((s) => s.trim());
-  }
-
-  function extractEmailsFromCsv(csvText: string) {
-    const text = csvText.replace(/^\uFEFF/, "").trim();
-    if (!text) return [];
-    const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
-    if (lines.length === 0) return [];
-
-    const headerCells = parseCsvLine(lines[0]).map((c) => c.toLowerCase());
-    const emailIdx = headerCells.findIndex((c) => c.includes("email"));
-
-    const startRow = emailIdx >= 0 ? 1 : 0;
-    const idx = emailIdx >= 0 ? emailIdx : 0;
-
-    const emails: string[] = [];
-    for (let i = startRow; i < lines.length; i++) {
-      const cells = parseCsvLine(lines[i]);
-      const candidate = (cells[idx] ?? "").trim();
-      if (candidate) emails.push(candidate);
-    }
-    return emails;
-  }
-
-  function isValidEmail(email: string) {
-    // simple but effective enough for UI validation
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  function addInvitesFromInput() {
-    const candidates = parseEmails(inviteInput);
-    if (candidates.length === 0) return;
-    setInviteEmails((prev) => {
-      const set = new Set(prev.map((e) => e.toLowerCase()));
-      for (const c of candidates) {
-        if (isValidEmail(c)) set.add(c.toLowerCase());
-      }
-      const next = Array.from(set);
-      try {
-        window.localStorage.setItem(invitesStorageKey, JSON.stringify(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-    setInviteInput("");
   }
 
   return (
     <div className="min-h-screen bg-white text-zinc-900">
-      <div className="mx-auto max-w-6xl px-6 py-5">
+      <div className="mx-auto w-full max-w-[1600px] px-6 py-5">
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <Link href="/" className="hover:text-zinc-700">
             Tests
@@ -545,22 +759,29 @@ export default function TestDetailsPage() {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            {/* Share removed per request */}
             <button
               type="button"
-              className="inline-flex h-9 items-center justify-center rounded-lg border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50"
-            >
-              Try Test
-            </button>
-            <button
-              type="button"
-              className="inline-flex h-9 items-center justify-center rounded-lg bg-corePurple px-3 text-sm font-semibold text-white hover:bg-violet"
               onClick={() => {
-                setPublished(true);
-                setInviteModalOpen(true);
+                saveTest();
+                try {
+                  const raw = window.localStorage.getItem(invitesStorageKey);
+                  const parsed = raw ? JSON.parse(raw) : [];
+                  const hasExisting = Array.isArray(parsed) && parsed.some((x: unknown) => typeof x === "string" && String(x).trim().length > 0);
+                  router.push(
+                    `/tests/${testId}/candidates${!hasExisting ? "?invite=1" : ""}`,
+                  );
+                } catch {
+                  router.push(`/tests/${testId}/candidates?invite=1`);
+                }
               }}
+              className={[
+                "inline-flex h-9 items-center justify-center rounded-lg px-3 text-sm font-semibold transition",
+                savedFeedback
+                  ? "border border-emerald-300 bg-emerald-50 text-emerald-700"
+                  : "bg-corePurple text-white hover:bg-violet",
+              ].join(" ")}
             >
-              {published ? "Published" : "Publish"}
+              {savedFeedback ? "Saved" : "Save"}
             </button>
             <button
               type="button"
@@ -591,26 +812,126 @@ export default function TestDetailsPage() {
           {/* Right-side "Role" box removed per request */}
           <div className="rounded-2xl border border-zinc-200 bg-white p-5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
-                <span className="text-zinc-700">Test duration:</span>
-                <span className="font-semibold">
-                  {role?.preview.durationMinutes ?? 0} mins
-                </span>
-                <button
-                  type="button"
-                  aria-label="Edit duration"
-                  className="ml-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900">
+                  <span className="text-zinc-700">Test duration:</span>
+                  {durationEditMode ? (
+                    <>
+                      <input
+                        type="number"
+                        min={1}
+                        max={999}
+                        value={durationInputValue}
+                        onChange={(e) =>
+                          setDurationInputValue(e.target.value.replace(/\D/g, ""))
+                        }
+                        onBlur={() => {
+                          const n = parseInt(durationInputValue, 10);
+                          if (!Number.isNaN(n) && n > 0) {
+                            setCustomDurationMinutes(n);
+                          }
+                          setDurationEditMode(false);
+                          setDurationInputValue("");
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            const n = parseInt(durationInputValue, 10);
+                            if (!Number.isNaN(n) && n > 0) {
+                              setCustomDurationMinutes(n);
+                            }
+                            setDurationEditMode(false);
+                            setDurationInputValue("");
+                          } else if (e.key === "Escape") {
+                            setDurationEditMode(false);
+                            setDurationInputValue("");
+                          }
+                        }}
+                        autoFocus
+                        className="h-8 w-20 rounded-md border border-zinc-300 px-2 text-sm outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-200"
+                      />
+                      <span className="text-zinc-500">mins</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-semibold">
+                        {(customDurationMinutes ??
+                          sections.reduce(
+                            (acc, s) =>
+                              acc +
+                              s.questions.reduce(
+                                (a, q) => a + q.timeMinutes,
+                                0,
+                              ),
+                            0,
+                          ))}{" "}
+                        mins
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Edit duration"
+                        onClick={() => {
+                          const recommended = sections.reduce(
+                            (acc, s) =>
+                              acc +
+                              s.questions.reduce(
+                                (a, q) => a + q.timeMinutes,
+                                0,
+                              ),
+                            0,
+                          );
+                          setDurationInputValue(
+                            String(customDurationMinutes ?? recommended),
+                          );
+                          setDurationEditMode(true);
+                        }}
+                        className="ml-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+                      >
+                        <IconPencil className="h-4 w-4" />
+                      </button>
+                      <span
+                        className="ml-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-zinc-400"
+                        title="Recommended duration based on question times"
+                      >
+                        <IconInfo className="h-4 w-4" />
+                      </span>
+                    </>
+                  )}
+                </div>
+                {(() => {
+                  const recommended = sections.reduce(
+                    (acc, s) =>
+                      acc +
+                      s.questions.reduce((a, q) => a + q.timeMinutes, 0),
+                    0,
+                  );
+                  if (
+                    customDurationMinutes !== null &&
+                    customDurationMinutes < recommended
+                  ) {
+                    return (
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-amber-600">
+                        <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-amber-400" />
+                        Duration is below recommended ({recommended} mins based
+                        on questions). Candidates may not have enough time.
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+              <div className="flex items-center gap-3">
+                <Link
+                  href={`/tests/${testId}/preview`}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 hover:bg-zinc-50"
                 >
-                  <IconPencil className="h-4 w-4" />
-                </button>
-                <span className="ml-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-zinc-400">
-                  <IconInfo className="h-4 w-4" />
+                  <IconPlay className="h-3.5 w-3.5" />
+                  Preview
+                </Link>
+                <span className="text-xs font-medium text-zinc-500">
+                  <span className="mr-1 inline-block h-2 w-2 rounded-full bg-amber-400 align-middle" />
+                  Draft
                 </span>
               </div>
-              <span className="text-xs font-medium text-zinc-500">
-                <span className="mr-1 inline-block h-2 w-2 rounded-full bg-amber-400 align-middle" />
-                Draft
-              </span>
             </div>
 
             <div className="mt-5 border-t border-zinc-100 pt-5">
@@ -618,25 +939,76 @@ export default function TestDetailsPage() {
                 <div className="text-sm font-semibold text-zinc-900">
                   Sections ({sections.length})
                 </div>
-                <button
-                  type="button"
-                    onClick={openAddModal}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm font-semibold text-corePurple hover:bg-softLavender"
-                >
-                  <span>Add New</span>
-                  <span className="text-lg leading-none">+</span>
-                </button>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAddDropdownOpen((prev) => !prev)
+                    }
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm font-semibold text-corePurple hover:bg-softLavender"
+                  >
+                    <span>Add New</span>
+                    <span
+                      className={[
+                        "text-lg leading-none transition-transform",
+                        addDropdownOpen ? "rotate-45" : "",
+                      ].join(" ")}
+                    >
+                      +
+                    </span>
+                  </button>
+                  {addDropdownOpen ? (
+                    <>
+                      <button
+                        type="button"
+                        aria-label="Close dropdown"
+                        className="fixed inset-0 z-10"
+                        onClick={() => setAddDropdownOpen(false)}
+                      />
+                      <div className="absolute right-0 top-full z-20 mt-1 min-w-[180px] overflow-hidden rounded-xl border border-zinc-200 bg-white py-1 shadow-lg">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAddDropdownOpen(false);
+                            openAddModal();
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                        >
+                          From library
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAddDropdownOpen(false);
+                            setCustomQuestionModalOpen(true);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                        >
+                          Custom question
+                        </button>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
               </div>
 
               <div className="space-y-2">
                 {sections.map((s) => {
                   const isOpen = openSection === s.id;
-                  const durationMins = s.minutes;
+                  const sectionMins = s.questions.reduce(
+                    (acc, q) => acc + q.timeMinutes,
+                    0,
+                  );
+                  const levelMatch = s.title.match(/\(([^)]+)\)\s*$/);
+                  const sectionLevel = levelMatch?.[1] ?? null;
+                  const baseSectionTitle = sectionLevel
+                    ? s.title.replace(/\s*\([^)]+\)\s*$/, "").trim()
+                    : s.title;
 
                   return (
                     <div
                       key={s.id}
-                      className="overflow-hidden rounded-xl border border-zinc-200 bg-white"
+                      className="overflow-visible rounded-xl border border-zinc-200 bg-white"
                     >
                       <div className="flex items-center justify-between px-4 py-3">
                         <div className="flex min-w-0 items-center gap-3">
@@ -662,7 +1034,7 @@ export default function TestDetailsPage() {
                           </button>
                           <div className="min-w-0">
                             <div className="truncate text-sm font-semibold text-zinc-900">
-                              {s.title}
+                              {baseSectionTitle}
                             </div>
                             <div className="truncate text-xs text-zinc-500">
                               Picks all questions
@@ -671,11 +1043,13 @@ export default function TestDetailsPage() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                          <div className="text-xs font-medium text-zinc-500">
-                            <span className="mr-1 inline-block align-middle">
-                              ⏱
-                            </span>
-                            {durationMins} mins
+                          <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
+                            <span>{sectionMins} mins</span>
+                            {sectionLevel ? (
+                              <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-600">
+                                {sectionLevel}
+                              </span>
+                            ) : null}
                           </div>
                           <button
                             type="button"
@@ -684,71 +1058,286 @@ export default function TestDetailsPage() {
                           >
                             <IconCog className="h-4.5 w-4.5" />
                           </button>
-                          <button
-                            type="button"
-                            aria-label="Delete section"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
-                          >
-                            <IconTrash className="h-4.5 w-4.5" />
-                          </button>
                         </div>
                       </div>
 
                       {isOpen ? (
                         <div className="border-t border-zinc-200 bg-zinc-50/30 px-4 py-4">
-                          <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-                            <div className="grid grid-cols-[1.7fr_1fr_0.7fr_0.9fr_0.6fr] gap-3 bg-zinc-50 px-4 py-3 text-xs font-semibold text-zinc-600">
+                          <div className="overflow-visible rounded-xl border border-zinc-200 bg-white">
+                            <div className="grid grid-cols-[1.7fr_1fr_0.7fr_0.8fr_0.9fr_0.5fr] gap-3 bg-zinc-50 px-4 py-3 text-xs font-semibold text-zinc-600">
                               <div>Questions ({s.questions.length})</div>
                               <div>Type</div>
                               <div>Time</div>
+                              <div>Difficulty</div>
                               <div>Skills</div>
                               <div className="text-right">Action</div>
                             </div>
 
                             <div className="divide-y divide-zinc-100">
-                              {s.questions.map((q) => (
+                              {s.questions.map((q) => {
+                                const displayTitle = q.title
+                                  .replace(/\s*\([^)]+\)\s*/, "")
+                                  .replace(/\s+/g, " ")
+                                  .trim();
+                                return (
                                 <div
                                   key={q.id}
-                                  className="grid grid-cols-[1.7fr_1fr_0.7fr_0.9fr_0.6fr] gap-3 px-4 py-3 text-xs text-zinc-700"
+                                  className="grid grid-cols-[1.7fr_1fr_0.7fr_0.8fr_0.9fr_0.5fr] gap-3 px-4 py-3 text-xs text-zinc-700"
                                 >
-                                  <div className="flex min-w-0 items-center gap-3">
-                                    <input
-                                      type="checkbox"
-                                      className="h-4 w-4 rounded border-zinc-300"
-                                      onClick={(e) => e.stopPropagation()}
-                                    />
+                                  <div className="flex min-w-0 items-center">
                                     <button
                                       type="button"
                                       onClick={() => setDetailsModal(q)}
-                                      className="min-w-0 truncate text-left font-medium text-zinc-800 hover:underline"
+                                      className="min-w-0 flex-1 truncate text-left font-medium text-zinc-800 hover:underline"
                                     >
-                                      {q.title}
+                                      {displayTitle}
                                     </button>
                                   </div>
                                   <div className="text-zinc-600">{q.type}</div>
                                   <div className="text-zinc-600">
                                     {q.timeMinutes} mins
                                   </div>
+                                  <div className="text-zinc-600">
+                                    {sectionLevel ? (
+                                      <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-zinc-600">
+                                        {sectionLevel}
+                                      </span>
+                                    ) : (
+                                      <span className="text-zinc-400">—</span>
+                                    )}
+                                  </div>
                                   <div className="text-zinc-600">{q.skill}</div>
-                                  <div className="flex items-center justify-end gap-2">
+                                  <div className="relative flex items-center justify-end gap-1">
                                     <button
                                       type="button"
-                                      aria-label="Analytics"
-                                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+                                      aria-label="Preview question"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setDetailsModal(q);
+                                      }}
+                                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
                                     >
-                                      <span className="text-sm">▮▮</span>
+                                      <IconPreview className="h-4 w-4" />
                                     </button>
                                     <button
                                       type="button"
-                                      aria-label="More"
-                                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-50 hover:text-zinc-700"
+                                      aria-label="Question actions"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setQuestionMenuOpen((prev) =>
+                                          prev === q.id ? null : q.id,
+                                        );
+                                      }}
+                                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
                                     >
                                       <IconDots className="h-4 w-4" />
                                     </button>
+                                    {questionMenuOpen === q.id ? (
+                                      <>
+                                        <button
+                                          type="button"
+                                          aria-label="Close menu"
+                                          className="fixed inset-0 z-40"
+                                          onClick={() =>
+                                            setQuestionMenuOpen(null)
+                                          }
+                                        />
+                                        <div className="absolute right-0 top-full z-50 mt-1 min-w-[140px] overflow-hidden rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setSectionLibraryOpen(s.id);
+                                              setReplaceTargetQuestionId(q.id);
+                                              const derived =
+                                                baseSectionTitle
+                                                  .split(" + ")[0]
+                                                  ?.trim() ??
+                                                baseSectionTitle;
+                                              setSectionLibrarySkill(derived);
+                                              setSectionLibraryQuery("");
+                                              setQuestionMenuOpen(null);
+                                            }}
+                                            className="flex w-full items-center px-3 py-2 text-left text-sm text-zinc-800 hover:bg-zinc-50"
+                                          >
+                                            Replace
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setSections((prev) =>
+                                                prev.map((sec) =>
+                                                  sec.id !== s.id
+                                                    ? sec
+                                                    : {
+                                                        ...sec,
+                                                        questions:
+                                                          sec.questions.filter(
+                                                            (qq) =>
+                                                              qq.id !== q.id,
+                                                          ),
+                                                      },
+                                                ),
+                                              );
+                                              setQuestionMenuOpen(null);
+                                            }}
+                                            className="flex w-full items-center px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                                          >
+                                            Delete
+                                          </button>
+                                        </div>
+                                      </>
+                                    ) : null}
                                   </div>
                                 </div>
-                              ))}
+                              );
+                              })}
                             </div>
+                          </div>
+
+                          <div className="mt-4">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const prev = sectionLibraryOpen;
+                                const next = prev === s.id ? null : s.id;
+                                setSectionLibraryOpen(next);
+                                if (next === s.id) {
+                                  const derived =
+                                    baseSectionTitle.split(" + ")[0]?.trim() ??
+                                    baseSectionTitle;
+                                  setSectionLibrarySkill(derived);
+                                  setSectionLibraryQuery("");
+                                  setReplaceTargetQuestionId(null);
+                                } else {
+                                  setReplaceTargetQuestionId(null);
+                                }
+                              }}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-zinc-300 px-3 py-2 text-xs font-semibold text-corePurple hover:border-corePurple hover:bg-softLavender/50"
+                            >
+                              Add from library
+                              <span className="text-lg leading-none">
+                                {sectionLibraryOpen === s.id ? "−" : "+"}
+                              </span>
+                            </button>
+                            {sectionLibraryOpen === s.id ? (
+                              <div className="mt-3 space-y-3 rounded-xl border border-zinc-200 bg-white p-4">
+                                {replaceTargetQuestionId ? (
+                                  <div className="rounded-lg bg-softLavender/50 px-3 py-2 text-xs font-medium text-corePurple">
+                                    Replacing:{" "}
+                                    {s.questions.find(
+                                      (qq) => qq.id === replaceTargetQuestionId,
+                                    )?.title?.slice(0, 50)}
+                                    ...
+                                  </div>
+                                ) : null}
+                                <div className="flex gap-2">
+                                  <input
+                                    value={sectionLibraryQuery}
+                                    onChange={(e) =>
+                                      setSectionLibraryQuery(e.target.value)
+                                    }
+                                    placeholder="Search questions..."
+                                    className="h-10 flex-1 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none focus:border-zinc-300"
+                                  />
+                                  <select
+                                    value={sectionLibrarySkill ?? ""}
+                                    onChange={(e) =>
+                                      setSectionLibrarySkill(
+                                        e.target.value || null,
+                                      )
+                                    }
+                                    className="h-10 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none focus:border-zinc-300"
+                                  >
+                                    <option value="">All skills</option>
+                                    {[
+                                      ...(sectionLibrarySkill &&
+                                      !allSkillOptions.includes(
+                                        sectionLibrarySkill,
+                                      )
+                                        ? [sectionLibrarySkill]
+                                        : []),
+                                      ...allSkillOptions,
+                                    ]
+                                      .filter(
+                                        (sk, i, arr) =>
+                                          arr.indexOf(sk) === i,
+                                      )
+                                      .map((sk) => (
+                                        <option key={sk} value={sk}>
+                                          {sk}
+                                        </option>
+                                      ))}
+                                  </select>
+                                </div>
+                                <div className="max-h-64 space-y-2 overflow-y-auto">
+                                  {sectionLibraryQuestions.length === 0 ? (
+                                    <div className="py-6 text-center text-sm text-zinc-500">
+                                      No questions match your search.
+                                    </div>
+                                  ) : (
+                                    sectionLibraryQuestions.map((libQ) => (
+                                      <button
+                                        key={libQ.id}
+                                        type="button"
+                                        onClick={() => {
+                                          const targetId = replaceTargetQuestionId;
+                                          setSections((prev) =>
+                                            prev.map((sec) =>
+                                              sec.id !== s.id
+                                                ? sec
+                                                : targetId
+                                                  ? {
+                                                      ...sec,
+                                                      questions:
+                                                        sec.questions.map(
+                                                          (qq) =>
+                                                            qq.id === targetId
+                                                              ? {
+                                                                  ...libQ,
+                                                                  id: `${libQ.id}-${Date.now()}`,
+                                                                }
+                                                              : qq,
+                                                        ),
+                                                    }
+                                                  : {
+                                                      ...sec,
+                                                      questions: [
+                                                        ...sec.questions,
+                                                        {
+                                                          ...libQ,
+                                                          id: `${libQ.id}-${Date.now()}`,
+                                                        },
+                                                      ],
+                                                    },
+                                            ),
+                                          );
+                                          setReplaceTargetQuestionId(null);
+                                        }}
+                                        className="w-full rounded-xl border border-zinc-200 bg-white p-3 text-left transition hover:border-zinc-300 hover:bg-zinc-50"
+                                      >
+                                        <div className="text-sm font-semibold text-zinc-900">
+                                          {libQ.title}
+                                        </div>
+                                        <div className="mt-1.5 flex flex-wrap gap-1.5">
+                                          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
+                                            {libQ.skill}
+                                          </span>
+                                          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
+                                            {libQ.type}
+                                          </span>
+                                          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
+                                            {libQ.timeMinutes} mins
+                                          </span>
+                                        </div>
+                                        <p className="mt-2 line-clamp-2 text-xs text-zinc-600">
+                                          {libQ.description}
+                                        </p>
+                                      </button>
+                                    ))
+                                  )}
+                                </div>
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                       ) : null}
@@ -777,7 +1366,6 @@ export default function TestDetailsPage() {
                 onChange={(e) => {
                   setSelectedSkill(null);
                   setSkillQuery(e.target.value);
-                  setSelectedLibraryQuestionId(null);
                 }}
                 placeholder="Choose a skill"
                 className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-4 pr-10 text-sm outline-none focus:border-zinc-300 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.04)]"
@@ -786,7 +1374,7 @@ export default function TestDetailsPage() {
                 <span className="text-lg leading-none">⌄</span>
               </span>
 
-              {!selectedSkill ? (
+              {!selectedSkill && skillQuery.trim().length > 0 ? (
                 <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-10 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
                   {filteredSkillOptions.length === 0 ? (
                     <div className="px-4 py-3 text-sm text-zinc-500">
@@ -800,7 +1388,6 @@ export default function TestDetailsPage() {
                         onClick={() => {
                           setSelectedSkill(s);
                           setSkillQuery("");
-                          setSelectedLibraryQuestionId(null);
                         }}
                         className="flex w-full items-center justify-between px-4 py-2 text-left text-sm text-zinc-800 hover:bg-zinc-50"
                       >
@@ -823,7 +1410,6 @@ export default function TestDetailsPage() {
                 value={selectedQuestionType ?? ""}
                 onChange={(e) => {
                   setSelectedQuestionType(e.target.value || null);
-                  setSelectedLibraryQuestionId(null);
                 }}
                 disabled={!selectedSkill}
                 className={[
@@ -847,9 +1433,6 @@ export default function TestDetailsPage() {
           </div>
 
           <div className="border-t border-zinc-200 pt-4">
-            <div className="text-sm font-semibold text-zinc-900">
-              Library results
-            </div>
             <div className="mt-3 space-y-2">
               {!selectedSkill ? (
                 <div className="rounded-xl border border-dashed border-zinc-200 p-4 text-sm text-zinc-500">
@@ -860,93 +1443,330 @@ export default function TestDetailsPage() {
                   No questions found for that skill/type.
                 </div>
               ) : (
-                filteredLibraryQuestions.slice(0, 6).map((q) => {
-                  const selected = selectedLibraryQuestionId === q.id;
-                  return (
-                    <button
-                      key={q.id}
-                      type="button"
-                      onClick={() => setSelectedLibraryQuestionId(q.id)}
-                      className={[
-                        "w-full rounded-xl border p-3 text-left transition",
-                        selected
-                          ? "border-violet bg-softLavender/80 shadow-[0_0_0_3px_rgba(89,76,233,0.15)]"
-                          : "border-zinc-200 bg-white hover:bg-zinc-50",
-                      ].join(" ")}
-                    >
-                      <div className="text-sm font-semibold text-zinc-900">
-                        {q.title}
-                      </div>
-                      <div className="mt-1 text-xs text-zinc-600">
-                        {q.type} · {q.timeMinutes} mins · {q.skill}
-                      </div>
-                    </button>
-                  );
-                })
+                filteredLibraryQuestions.slice(0, 6).map((q) => (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => {
+                      const firstSectionId = sections[0]?.id;
+                      if (!firstSectionId) return;
+                      setSections((prev) =>
+                        prev.map((s) =>
+                          s.id !== firstSectionId
+                            ? s
+                            : {
+                                ...s,
+                                questions: [
+                                  ...s.questions,
+                                  { ...q, id: `${q.id}-${Date.now()}` },
+                                ],
+                              },
+                        ),
+                      );
+                      setOpenSection(firstSectionId);
+                      setAddModalOpen(false);
+                    }}
+                    className="w-full rounded-xl border border-zinc-200 bg-white p-3 text-left transition hover:bg-zinc-50 hover:border-zinc-300"
+                  >
+                    <div className="text-sm font-semibold text-zinc-900">
+                      {q.title}
+                    </div>
+                    <div className="mt-1 flex items-center gap-2 text-xs text-zinc-600">
+                      <QuestionTypeIcon
+                        type={q.type}
+                        className="h-3.5 w-3.5 shrink-0 text-zinc-500"
+                      />
+                      <span>{q.type} · {q.timeMinutes} mins · {q.skill}</span>
+                    </div>
+                  </button>
+                ))
               )}
             </div>
           </div>
+        </div>
+      </ModalShell>
 
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-zinc-500">
-              Target section{" "}
-              <span className="font-medium text-zinc-700">
-                {sections.find((s) => s.id === targetSectionId)?.title ??
-                  "—"}
-              </span>
+      <ModalShell
+        title="Add custom question"
+        open={customQuestionModalOpen}
+        onClose={() => {
+          setCustomQuestionModalOpen(false);
+          setCustomSkillQuery("");
+          setCustomQuestion({
+            title: "",
+            skills: [],
+            type: "Short Answer",
+            timeMinutes: 15,
+            description: "",
+            options: ["", ""],
+          });
+        }}
+      >
+        <form
+          className="grid gap-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const firstSectionId = sections[0]?.id;
+            const isMultipleChoice = customQuestion.type === "Multiple Choice";
+            const validOptions =
+              !isMultipleChoice ||
+              customQuestion.options.some((o) => o.trim().length > 0);
+            if (
+              !firstSectionId ||
+              !customQuestion.description.trim() ||
+              !validOptions
+            )
+              return;
+            const optionsForQuestion =
+              isMultipleChoice
+                ? customQuestion.options.filter((o) => o.trim().length > 0)
+                : undefined;
+            const q: Question = {
+              id: `custom-${Date.now()}`,
+              title: customQuestion.title.trim() || customQuestion.description.trim().slice(0, 50),
+              skill: customQuestion.skills.length > 0
+                ? customQuestion.skills.join(", ")
+                : "General",
+              type: customQuestion.type,
+              timeMinutes: customQuestion.timeMinutes,
+              description: customQuestion.description.trim(),
+              ...(optionsForQuestion && optionsForQuestion.length > 0
+                ? { options: optionsForQuestion }
+                : {}),
+            };
+            setSections((prev) =>
+              prev.map((s) =>
+                s.id !== firstSectionId
+                  ? s
+                  : { ...s, questions: [...s.questions, q] },
+              ),
+            );
+            setOpenSection(firstSectionId);
+            setCustomQuestionModalOpen(false);
+            setCustomQuestion({
+              title: "",
+              skills: [],
+              type: "Short Answer",
+              timeMinutes: 15,
+              description: "",
+              options: ["", ""],
+            });
+          }}
+        >
+          <div>
+            <div className="text-sm font-medium text-zinc-800">
+              Question type
             </div>
-            <div className="flex items-center gap-2">
-              <select
-                value={targetSectionId ?? ""}
-                onChange={(e) => setTargetSectionId(e.target.value)}
-                className="h-10 rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-800"
-              >
-                {sections.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.title}
-                  </option>
+            <select
+              value={customQuestion.type}
+              onChange={(e) => {
+                const v = e.target.value as "Multiple Choice" | "Short Answer";
+                setCustomQuestion((p) => ({
+                  ...p,
+                  type: v,
+                  options: v === "Multiple Choice" ? ["", ""] : [],
+                }));
+              }}
+              className="mt-2 h-11 w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 pr-10 text-sm outline-none focus:border-zinc-300"
+            >
+              {CUSTOM_QUESTION_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <div className="text-sm font-medium text-zinc-800">
+              Title (optional)
+            </div>
+            <input
+              value={customQuestion.title}
+              onChange={(e) =>
+                setCustomQuestion((p) => ({ ...p, title: e.target.value }))
+              }
+              placeholder="Short label for this question"
+              className="mt-2 h-11 w-full rounded-xl border border-zinc-200 bg-white px-4 text-sm outline-none focus:border-zinc-300 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.04)]"
+            />
+          </div>
+          <div>
+            <div className="text-sm font-medium text-zinc-800">
+              Skills <span className="text-zinc-500">(multi-select)</span>
+            </div>
+            {customQuestion.skills.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {customQuestion.skills.map((s) => (
+                  <span
+                    key={s}
+                    className="inline-flex items-center gap-1 rounded-full bg-corePurple px-3 py-1 text-xs font-medium text-white"
+                  >
+                    {s}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCustomQuestion((p) => ({
+                          ...p,
+                          skills: p.skills.filter((x) => x !== s),
+                        }))
+                      }
+                      className="hover:text-white/80"
+                    >
+                      ×
+                    </button>
+                  </span>
                 ))}
-              </select>
-              <button
-                type="button"
-                disabled={!selectedLibraryQuestionId || !targetSectionId}
-                onClick={() => {
-                  if (!selectedLibraryQuestionId || !targetSectionId) return;
-                  const q =
-                    QUESTION_LIBRARY.find((x) => x.id === selectedLibraryQuestionId) ??
-                    null;
-                  if (!q) return;
-                  setSections((prev) =>
-                    prev.map((s) =>
-                      s.id !== targetSectionId
-                        ? s
-                        : {
-                            ...s,
-                            questions: [
-                              ...s.questions,
-                              {
-                                ...q,
-                                id: `${q.id}-${Date.now()}`,
-                              },
-                            ],
-                          },
-                    ),
-                  );
-                  setOpenSection(targetSectionId);
-                  setAddModalOpen(false);
-                }}
-                className={[
-                  "inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold",
-                  !selectedLibraryQuestionId || !targetSectionId
-                    ? "bg-zinc-200 text-zinc-500"
-                    : "bg-corePurple text-white hover:bg-violet",
-                ].join(" ")}
-              >
-                Add to test
-              </button>
+              </div>
+            ) : null}
+            <div className="relative mt-2">
+              <input
+                value={customSkillQuery}
+                onChange={(e) => setCustomSkillQuery(e.target.value)}
+                placeholder="Search and add skills"
+                className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-4 pr-10 text-sm outline-none focus:border-zinc-300 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.04)]"
+              />
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">
+                <span className="text-lg leading-none">⌄</span>
+              </span>
+              {customSkillQuery.trim() && filteredCustomSkills.length > 0 ? (
+                <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-10 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
+                  {filteredCustomSkills.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => {
+                        setCustomQuestion((p) => ({
+                          ...p,
+                          skills: [...p.skills, s],
+                        }));
+                        setCustomSkillQuery("");
+                      }}
+                      className="flex w-full px-4 py-2 text-left text-sm text-zinc-800 hover:bg-zinc-50"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              ) : customSkillQuery.trim() ? (
+                <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-10 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-500 shadow-lg">
+                  No matching skills.
+                </div>
+              ) : null}
             </div>
           </div>
-        </div>
+          <div>
+            <div className="text-sm font-medium text-zinc-800">
+              Time (minutes)
+            </div>
+            <input
+              type="number"
+              min={1}
+              max={999}
+              value={customQuestion.timeMinutes}
+              onChange={(e) =>
+                setCustomQuestion((p) => ({
+                  ...p,
+                  timeMinutes: parseInt(e.target.value, 10) || 15,
+                }))
+              }
+              className="mt-2 h-11 w-full rounded-xl border border-zinc-200 bg-white px-4 text-sm outline-none focus:border-zinc-300 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.04)]"
+            />
+          </div>
+          {customQuestion.type === "Multiple Choice" ? (
+            <div>
+              <div className="text-sm font-medium text-zinc-800">
+                Options <span className="text-red-500">*</span>
+              </div>
+              <div className="mt-2 space-y-2">
+                {customQuestion.options.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="w-6 shrink-0 text-xs text-zinc-500">
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <input
+                      value={opt}
+                      onChange={(e) => {
+                        const next = [...customQuestion.options];
+                        next[i] = e.target.value;
+                        setCustomQuestion((p) => ({ ...p, options: next }));
+                      }}
+                      placeholder={`Option ${i + 1}`}
+                      className="h-10 flex-1 rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none focus:border-zinc-300"
+                    />
+                    <button
+                      type="button"
+                      aria-label="Remove option"
+                      onClick={() => {
+                        if (customQuestion.options.length > 2) {
+                          setCustomQuestion((p) => ({
+                            ...p,
+                            options: p.options.filter((_, j) => j !== i),
+                          }));
+                        }
+                      }}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCustomQuestion((p) => ({
+                      ...p,
+                      options: [...p.options, ""],
+                    }))
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-dashed border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50"
+                >
+                  + Add option
+                </button>
+              </div>
+            </div>
+          ) : null}
+          <div>
+            <div className="text-sm font-medium text-zinc-800">
+              Question <span className="text-red-500">*</span>
+            </div>
+            <textarea
+              required
+              value={customQuestion.description}
+              onChange={(e) =>
+                setCustomQuestion((p) => ({ ...p, description: e.target.value }))
+              }
+              placeholder="Enter your question"
+              rows={3}
+              className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none focus:border-zinc-300 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.04)]"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setCustomQuestionModalOpen(false)}
+              className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-800 hover:bg-zinc-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={
+                !customQuestion.description.trim() ||
+                (customQuestion.type === "Multiple Choice" &&
+                  !customQuestion.options.some((o) => o.trim().length > 0))
+              }
+              className={[
+                "inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold",
+                customQuestion.description.trim() &&
+                (customQuestion.type !== "Multiple Choice" ||
+                  customQuestion.options.some((o) => o.trim().length > 0))
+                  ? "bg-corePurple text-white hover:bg-violet"
+                  : "bg-zinc-200 text-zinc-500",
+              ].join(" ")}
+            >
+              Add question
+            </button>
+          </div>
+        </form>
       </ModalShell>
 
       <ModalShell
@@ -956,194 +1776,96 @@ export default function TestDetailsPage() {
       >
         {detailsModal ? (
           <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href={`/tests/${testId}/preview?question=${encodeURIComponent(detailsModal.id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+              >
+                <IconPreview className="h-4 w-4" />
+                Preview question
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  const section = sections.find((s) =>
+                    s.questions.some((qq) => qq.id === detailsModal.id),
+                  );
+                  if (section) {
+                    setSections((prev) =>
+                      prev.map((sec) =>
+                        sec.id !== section.id
+                          ? sec
+                          : {
+                              ...sec,
+                              questions: sec.questions.filter(
+                                (qq) => qq.id !== detailsModal.id,
+                              ),
+                            },
+                      ),
+                    );
+                  }
+                  setDetailsModal(null);
+                }}
+                className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+              >
+                Delete
+              </button>
+            </div>
             <div className="text-base font-semibold text-zinc-900">
-              {detailsModal.title}
+              {detailsModal.title.replace(/\s*\([^)]+\)\s*/, "").replace(/\s+/g, " ").trim()}
             </div>
             <div className="flex flex-wrap gap-2 text-xs text-zinc-600">
               <span className="rounded-full bg-zinc-100 px-2 py-0.5">
                 {detailsModal.skill}
               </span>
-              <span className="rounded-full bg-zinc-100 px-2 py-0.5">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-100 px-2 py-0.5">
+                <QuestionTypeIcon
+                  type={detailsModal.type}
+                  className="h-3.5 w-3.5 shrink-0 text-zinc-500"
+                />
                 {detailsModal.type}
               </span>
               <span className="rounded-full bg-zinc-100 px-2 py-0.5">
                 {detailsModal.timeMinutes} mins
               </span>
+              {(() => {
+                const section = sections.find((s) =>
+                  s.questions.some((qq) => qq.id === detailsModal.id),
+                );
+                const levelMatch = section?.title.match(/\(([^)]+)\)\s*$/);
+                const difficulty = levelMatch?.[1] ?? null;
+                return difficulty ? (
+                  <span className="rounded-full bg-zinc-100 px-2 py-0.5">
+                    {difficulty}
+                  </span>
+                ) : null;
+              })()}
             </div>
             <div className="rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700">
               {detailsModal.description}
             </div>
-          </div>
-        ) : null}
-      </ModalShell>
-
-      <ModalShell
-        title="Invite candidates"
-        open={inviteModalOpen}
-        onClose={() => {
-          setInviteModalOpen(false);
-          setLastCsvImport(null);
-        }}
-      >
-        <div className="grid gap-5">
-          <div className="text-sm text-zinc-600">
-            Add candidate emails to invite them to{" "}
-            <span className="font-medium text-zinc-800">
-              {role?.preview.testTitle ?? "this test"}
-            </span>
-            .
-          </div>
-
-          <div>
-            <div className="text-sm font-medium text-zinc-800">
-              Candidate emails <span className="text-red-500">*</span>
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <input
-                value={inviteInput}
-                onChange={(e) => setInviteInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addInvitesFromInput();
-                  }
-                }}
-                placeholder="e.g. alex@company.com, priya@company.com"
-                className="h-11 flex-1 rounded-xl border border-zinc-200 bg-white px-4 text-sm outline-none focus:border-zinc-300 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.04)]"
-              />
-              <button
-                type="button"
-                onClick={addInvitesFromInput}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-900 hover:bg-zinc-50"
-              >
-                Add
-              </button>
-            </div>
-            <div className="mt-2 text-xs text-zinc-500">
-              Tip: paste multiple emails separated by commas or new lines.
-            </div>
-
-            <input
-              ref={csvInputRef}
-              type="file"
-              className="hidden"
-              accept=".csv,text/csv"
-              onChange={async (e) => {
-                const file = e.target.files?.[0] ?? null;
-                if (!file) return;
-                const csv = await file.text();
-                const candidates = extractEmailsFromCsv(csv);
-                setInviteEmails((prev) => {
-                  const set = new Set(prev.map((x) => x.toLowerCase()));
-                  let added = 0;
-                  for (const c of candidates) {
-                    const norm = c.trim().toLowerCase();
-                    if (!norm) continue;
-                    if (!isValidEmail(norm)) continue;
-                    if (set.has(norm)) continue;
-                    set.add(norm);
-                    added++;
-                  }
-                  setLastCsvImport({ fileName: file.name, imported: added });
-                  return Array.from(set);
-                });
-                // allow re-uploading the same file
-                e.currentTarget.value = "";
-              }}
-            />
-
-            <div className="mt-3 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => csvInputRef.current?.click()}
-                className="inline-flex h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-900 hover:bg-zinc-50"
-              >
-                Upload CSV
-              </button>
-              <div className="text-xs text-zinc-500">
-                CSV can include an <span className="font-medium">email</span>{" "}
-                column (header optional).
-              </div>
-            </div>
-            {lastCsvImport ? (
-              <div className="mt-2 text-xs text-zinc-600">
-                Imported{" "}
-                <span className="font-semibold">{lastCsvImport.imported}</span>{" "}
-                from{" "}
-                <span className="font-medium">{lastCsvImport.fileName}</span>.
+            {detailsModal.options && detailsModal.options.length > 0 ? (
+              <div className="space-y-2">
+                <div className="text-xs font-medium text-zinc-500">Options</div>
+                <div className="space-y-1">
+                  {detailsModal.options.map((opt, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2 rounded-lg border border-zinc-100 bg-zinc-50/50 px-3 py-2 text-sm text-zinc-800"
+                    >
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-zinc-200 text-xs font-medium text-zinc-600">
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                      {opt}
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : null}
           </div>
-
-          <div className="rounded-xl border border-zinc-200 bg-white p-3">
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Recipients ({inviteEmails.length})
-            </div>
-            {inviteEmails.length === 0 ? (
-              <div className="text-sm text-zinc-500">
-                No recipients added yet.
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {inviteEmails.map((email) => (
-                  <span
-                    key={email}
-                    className="inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-800"
-                  >
-                    <span className="max-w-[340px] truncate">{email}</span>
-                    <button
-                      type="button"
-                      aria-label={`Remove ${email}`}
-                      onClick={() =>
-                        setInviteEmails((prev) =>
-                          prev.filter((e) => e !== email),
-                        )
-                      }
-                      className="inline-flex h-5 w-5 items-center justify-center rounded-full text-zinc-500 hover:bg-white hover:text-zinc-700"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setInviteModalOpen(false)}
-              className="inline-flex h-11 items-center justify-center rounded-xl border border-zinc-200 bg-white px-5 text-sm font-semibold text-zinc-900 hover:bg-zinc-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              disabled={inviteEmails.length === 0}
-              onClick={() => {
-                // mock: no backend yet; persist to local storage and navigate
-                try {
-                  window.localStorage.setItem(
-                    invitesStorageKey,
-                    JSON.stringify(inviteEmails),
-                  );
-                } catch {
-                  // ignore
-                }
-                setInviteModalOpen(false);
-                router.push(`/tests/${testId}/candidates`);
-              }}
-              className={[
-                "inline-flex h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold",
-                inviteEmails.length === 0
-                  ? "bg-zinc-200 text-zinc-500"
-                  : "bg-corePurple text-white hover:bg-violet",
-              ].join(" ")}
-            >
-              Send invites
-            </button>
-          </div>
-        </div>
+        ) : null}
       </ModalShell>
     </div>
   );
