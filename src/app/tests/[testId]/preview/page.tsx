@@ -83,7 +83,7 @@ export default function PreviewPage() {
     <div className="min-h-screen bg-white text-zinc-900">
       <div className="mx-auto max-w-3xl px-6 py-5">
         <div className="flex items-center gap-2 text-xs text-zinc-500">
-          <Link href="/" className="hover:text-zinc-700">
+          <Link href="/tests" className="hover:text-zinc-700">
             Tests
           </Link>
           <IconChevronRight className="h-3.5 w-3.5 text-zinc-400" />
@@ -102,9 +102,6 @@ export default function PreviewPage() {
             <h1 className="font-fustat truncate text-2xl font-semibold text-graphite">
               {questionId ? "Question Preview" : "Assessment Preview"}
             </h1>
-            <p className="mt-1 text-sm text-zinc-500">
-              {role?.preview.testTitle ?? "Hiring Test"}
-            </p>
           </div>
 
           <button

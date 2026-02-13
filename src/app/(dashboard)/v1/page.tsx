@@ -140,7 +140,7 @@ export default function CreateTestV1() {
       <div className="mx-auto w-full max-w-[1600px] px-6 py-6">
         <header className="mb-4 flex items-center gap-3">
           <Link
-            href="/"
+            href="/tests"
             aria-label="Back"
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 shadow-sm hover:bg-zinc-50"
           >
@@ -192,9 +192,6 @@ export default function CreateTestV1() {
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium text-zinc-900">
                       Create Test with Job Description
-                    </div>
-                    <div className="text-xs text-zinc-500">
-                      Upload or paste a JD to generate a role-specific test.
                     </div>
                   </div>
                 </div>

@@ -22,6 +22,39 @@ type SectionState = {
   questions: Question[];
 };
 
+function seedQuestionDescription(sectionTitle: string) {
+  const base = sectionTitle.replace(/\s+/g, " ").trim().toLowerCase();
+  if (base.includes("schematic review")) {
+    return [
+      "You’re given a mixed‑signal board schematic (power + MCU + sensors). Walk through your schematic review process and flag the top risks you’d want addressed before layout.",
+      "",
+      "What to cover (mock):",
+      "- Power path: protections, inrush/current limits, compensation/stability, decoupling strategy",
+      "- Interfaces: I2C/SPI pull-ups/levels, ESD/TVS, connector considerations",
+      "- Grounding/return paths: split planes, analog/digital partitioning, reference integrity",
+      "- Clocks/high‑speed: routing constraints, termination needs, isolation/noise coupling",
+      "",
+      "Deliverable:",
+      "- List 5 specific risks and propose 3 concrete schematic changes (with rationale).",
+    ].join("\n");
+  }
+  if (base.includes("cad") && base.includes("drawing")) {
+    return [
+      "You’re given a simple bracket assembly (2–3 parts) with a mating interface and a fastener pattern. Produce manufacturing-ready drawings and call out what matters for a supplier to build it correctly.",
+      "",
+      "What to include (mock):",
+      "- View strategy: orthographic + section/detail views where needed",
+      "- Critical dimensions and datum scheme (how you chose them)",
+      "- Hole callouts/threads and tolerances appropriate for the process",
+      "- Notes: finish, deburr, material/heat treat, inspection-critical features",
+      "",
+      "Deliverable:",
+      "- List 8–12 specific annotations/callouts you would add and why.",
+    ].join("\n");
+  }
+  return "Mock question content. In a real app this would show the full prompt, constraints, and evaluation rubric.";
+}
+
 const QUESTION_TYPES = [
   "Project (Generated)",
   "Multiple Choice",
@@ -479,13 +512,13 @@ function Tab({
     <button
       type="button"
       className={[
-        "relative px-1 pb-3 text-sm font-medium transition",
+        "relative -mb-px inline-flex items-center px-4 py-3.5 text-sm font-medium transition",
         active ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-700",
       ].join(" ")}
     >
       {children}
       {active ? (
-        <span className="absolute inset-x-0 -bottom-[1px] h-[2px] rounded-full bg-corePurple" />
+        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-corePurple" />
       ) : null}
     </button>
   );
@@ -549,6 +582,22 @@ export default function TestDetailsPage() {
     () => `test-duration:${testId}`,
     [testId],
   );
+  const testSavedStorageKey = React.useMemo(
+    () => `test-saved:${testId}`,
+    [testId],
+  );
+
+  const [hasBeenSaved, setHasBeenSaved] = React.useState(false);
+  React.useEffect(() => {
+    if (!testId) return;
+    try {
+      if (window.localStorage.getItem(testSavedStorageKey) === "1") {
+        setHasBeenSaved(true);
+      }
+    } catch {
+      // ignore
+    }
+  }, [testId, testSavedStorageKey]);
 
   React.useEffect(() => {
     if (!testId) return;
@@ -577,8 +626,7 @@ export default function TestDetailsPage() {
         skill: s.title.replace(/\s*\(.*?\)\s*/g, "").trim(),
         type: "Project (Generated)",
         timeMinutes: minutes,
-        description:
-          "Mock question content. In a real app this would show the full prompt, constraints, and evaluation rubric.",
+        description: seedQuestionDescription(s.title),
       };
       return {
         id: `section-${idx}`,
@@ -617,8 +665,7 @@ export default function TestDetailsPage() {
           skill: s.title.replace(/\s*\(.*?\)\s*/g, "").trim(),
           type: "Project (Generated)",
           timeMinutes: minutes,
-          description:
-            "Mock question content. In a real app this would show the full prompt, constraints, and evaluation rubric.",
+          description: seedQuestionDescription(s.title),
         };
         return {
           id: `section-${idx}`,
@@ -651,6 +698,8 @@ export default function TestDetailsPage() {
           0,
         );
       window.localStorage.setItem(testDurationStorageKey, String(duration));
+      window.localStorage.setItem(testSavedStorageKey, "1");
+      setHasBeenSaved(true);
       setSavedFeedback(true);
       window.setTimeout(() => setSavedFeedback(false), 2000);
     } catch {
@@ -733,7 +782,7 @@ export default function TestDetailsPage() {
     <div className="min-h-screen bg-white text-zinc-900">
       <div className="mx-auto w-full max-w-[1600px] px-6 py-5">
         <div className="flex items-center gap-2 text-xs text-zinc-500">
-          <Link href="/" className="hover:text-zinc-700">
+          <Link href="/tests" className="hover:text-zinc-700">
             Tests
           </Link>
           <IconChevronRight className="h-3.5 w-3.5 text-zinc-400" />
@@ -759,52 +808,86 @@ export default function TestDetailsPage() {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                saveTest();
-                try {
-                  const raw = window.localStorage.getItem(invitesStorageKey);
-                  const parsed = raw ? JSON.parse(raw) : [];
-                  const hasExisting = Array.isArray(parsed) && parsed.some((x: unknown) => typeof x === "string" && String(x).trim().length > 0);
-                  router.push(
-                    `/tests/${testId}/candidates${!hasExisting ? "?invite=1" : ""}`,
-                  );
-                } catch {
-                  router.push(`/tests/${testId}/candidates?invite=1`);
-                }
-              }}
-              className={[
-                "inline-flex h-9 items-center justify-center rounded-lg px-3 text-sm font-semibold transition",
-                savedFeedback
-                  ? "border border-emerald-300 bg-emerald-50 text-emerald-700"
-                  : "bg-corePurple text-white hover:bg-violet",
-              ].join(" ")}
-            >
-              {savedFeedback ? "Saved" : "Save"}
-            </button>
-            <button
-              type="button"
-              aria-label="More"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
-            >
-              <IconDots className="h-4 w-4" />
-            </button>
+            {hasBeenSaved ? (
+              <>
+                <button
+                  type="button"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50"
+                >
+                  Share
+                </button>
+                <Link
+                  href={`/tests/${testId}/preview`}
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50"
+                >
+                  Try Test
+                </Link>
+                <Link
+                  href={`/tests/${testId}/candidates?invite=1`}
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-corePurple px-3 text-sm font-semibold text-white hover:bg-violet"
+                >
+                  + Invite
+                </Link>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    saveTest();
+                    try {
+                      const raw = window.localStorage.getItem(invitesStorageKey);
+                      const parsed = raw ? JSON.parse(raw) : [];
+                      const hasExisting = Array.isArray(parsed) && parsed.some((x: unknown) => typeof x === "string" && String(x).trim().length > 0);
+                      router.push(
+                        `/tests/${testId}/candidates${!hasExisting ? "?invite=1" : ""}`,
+                      );
+                    } catch {
+                      router.push(`/tests/${testId}/candidates?invite=1`);
+                    }
+                  }}
+                  className={[
+                    "inline-flex h-9 items-center justify-center rounded-lg px-3 text-sm font-semibold transition",
+                    savedFeedback
+                      ? "border border-emerald-300 bg-emerald-50 text-emerald-700"
+                      : "bg-corePurple text-white hover:bg-violet",
+                  ].join(" ")}
+                >
+                  {savedFeedback ? "Saved" : "Save"}
+                </button>
+                <button
+                  type="button"
+                  aria-label="More"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50"
+                >
+                  <IconDots className="h-4 w-4" />
+                </button>
+              </>
+            )}
           </div>
         </div>
 
         <div className="mt-4 border-b border-zinc-200">
-          <div className="flex items-end gap-5">
+          <div className="flex gap-6">
             <Tab active>Questions</Tab>
-            <button
-              type="button"
-              onClick={() => router.push(`/tests/${testId}/candidates`)}
-              className="relative px-1 pb-3 text-sm font-medium text-zinc-500 transition hover:text-zinc-700"
+            <Link
+              href={`/tests/${testId}/candidates`}
+              className="relative -mb-px inline-flex items-center px-4 py-3.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-700"
             >
               Candidates
-            </button>
-            {/* Insights removed per request */}
-            <Tab>Settings</Tab>
+            </Link>
+            <Link
+              href={`/tests/${testId}/insights`}
+              className="relative -mb-px inline-flex items-center px-4 py-3.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-700"
+            >
+              Insights
+            </Link>
+            <Link
+              href={`/tests/${testId}/settings`}
+              className="relative -mb-px inline-flex items-center px-4 py-3.5 text-sm font-medium text-zinc-500 transition hover:text-zinc-700"
+            >
+              Settings
+            </Link>
           </div>
         </div>
 
@@ -1843,8 +1926,18 @@ export default function TestDetailsPage() {
                 ) : null;
               })()}
             </div>
-            <div className="rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700">
-              {detailsModal.description}
+            <div className="whitespace-pre-line rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700">
+              {(() => {
+                const section = sections.find((s) =>
+                  s.questions.some((qq) => qq.id === detailsModal.id),
+                );
+                // Override cached placeholder with a deterministic mock prompt.
+                const isPlaceholder =
+                  detailsModal.description.startsWith("Mock question content.");
+                return section && isPlaceholder
+                  ? seedQuestionDescription(section.title)
+                  : detailsModal.description;
+              })()}
             </div>
             {detailsModal.options && detailsModal.options.length > 0 ? (
               <div className="space-y-2">
