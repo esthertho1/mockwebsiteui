@@ -462,8 +462,8 @@ export default function PreviewPage() {
                             type="button"
                             disabled={!agreedToTerms}
                             onClick={() => {
-                              if (agreedToTerms && firstQuestionId) {
-                                router.push(`/tests/${testId}/preview?question=${encodeURIComponent(firstQuestionId)}`);
+                              if (agreedToTerms) {
+                                router.push(`/tests/${testId}/preview/workspace`);
                               }
                             }}
                             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-corePurple to-violet px-5 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_-2px_rgba(77,62,240,0.45)] transition hover:shadow-[0_6px_20px_-2px_rgba(77,62,240,0.5)] hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed"
