@@ -343,6 +343,11 @@ export default function WorkspaceLayoutPage() {
     }
   };
 
+  const handleSubmitAssignment = () => {
+    router.push(`/tests/${testId}/preview/thank-you`);
+  };
+
+  const isLastQuestion = scenarioIndex === scenarioTotal - 1;
   const progress = Math.round(((scenarioIndex + 1) / scenarioTotal) * 100);
 
   if (isOnshape && isOnshapeScenario(scenario)) {
@@ -464,25 +469,11 @@ export default function WorkspaceLayoutPage() {
       {/* Top App Bar */}
       <div className="sticky top-0 z-40 border-b border-zinc-200/60 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 py-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-200 bg-white shadow-sm">
-              <Icon name="sparkles" className="h-4 w-4 text-corePurple" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="truncate text-base font-semibold text-zinc-900">{scenario.title}</h1>
-                <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-                  Scenario {scenarioIndex + 1}
-                </span>
-                <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs text-zinc-600">{scenario.skill}</span>
-              </div>
-              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-                <span className="truncate">{scenario.subtitle}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="inline-flex items-center gap-1">
-                  <Icon name="clock" className="h-3.5 w-3.5" /> 5:55 remaining
-                </span>
-              </div>
+          <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
+            <h1 className="truncate text-xl font-semibold text-zinc-900">{scenario.title}</h1>
+            <div className="inline-flex shrink-0 items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 shadow-sm">
+              <Icon name="clock" className="h-3.5 w-3.5 text-zinc-500" />
+              5:55
             </div>
           </div>
 
@@ -506,13 +497,23 @@ export default function WorkspaceLayoutPage() {
             >
               <Icon name="chevronLeft" className="h-4 w-4" /> Previous
             </button>
-            <button
-              type="button"
-              onClick={goNext}
-              className="inline-flex items-center gap-2 rounded-xl bg-corePurple px-3 py-2 text-sm font-medium text-white transition hover:brightness-105"
-            >
-              Next <Icon name="chevronRight" className="h-4 w-4" />
-            </button>
+            {isLastQuestion ? (
+              <button
+                type="button"
+                onClick={handleSubmitAssignment}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+              >
+                Submit assignment
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={goNext}
+                className="inline-flex items-center gap-2 rounded-xl bg-corePurple px-3 py-2 text-sm font-medium text-white transition hover:brightness-105"
+              >
+                Next <Icon name="chevronRight" className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -522,29 +523,14 @@ export default function WorkspaceLayoutPage() {
         {/* Center: Document brief */}
         <div className="h-[calc(100vh-88px)] overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm">
           <div className="border-b border-zinc-100 px-4 py-3">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="text-sm font-semibold text-zinc-900">Design brief</div>
-                <div className="text-xs text-zinc-500">Read the context, then decide your approach</div>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {scenario.badges?.map((b) => (
-                  <span key={b} className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-                    {b}
-                  </span>
-                ))}
-                {!scenario.badges?.length && (
-                  <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs text-zinc-600">{scenario.skill}</span>
-                )}
-              </div>
+            <div>
+              <div className="text-sm font-semibold text-zinc-900">Design brief</div>
+              <div className="text-xs text-zinc-500">Read the context, then decide your approach</div>
             </div>
           </div>
           <div className="h-[calc(100vh-160px)] overflow-y-auto p-4">
             <div className="space-y-5">
-              <div className="space-y-2">
-                <h2 className="text-xl font-semibold tracking-tight text-zinc-900">{scenario.title}</h2>
-                <p className="whitespace-pre-line text-sm text-zinc-600">{scenario.description}</p>
-              </div>
+              <p className="whitespace-pre-line text-sm text-zinc-600">{scenario.description}</p>
 
               <div className="rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4">
                 <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Context & constraints</div>
@@ -724,33 +710,33 @@ export default function WorkspaceLayoutPage() {
                 )}
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center gap-6 rounded-xl border-2 border-dashed border-zinc-200 bg-zinc-50/50 p-6 min-h-[280px]">
+              <div className="relative flex flex-col items-center justify-center gap-8 rounded-2xl bg-gradient-to-b from-zinc-50/80 to-white p-8 min-h-[280px] shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
                 {!voiceState.recordingStarted ? (
                   <>
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-corePurple/10">
-                      <Icon name="mic" className="h-10 w-10 text-corePurple" />
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-corePurple/20 to-violet/10 shadow-[0_8px_32px_-8px_rgba(77,62,240,0.25)]">
+                      <Icon name="mic" className="h-12 w-12 text-corePurple" />
                     </div>
                     <div className="text-center">
-                      <p className="text-sm font-medium text-zinc-700">Record your voice response</p>
-                      <p className="mt-1 text-xs text-zinc-500">Click the button below to start</p>
+                      <p className="text-base font-semibold text-zinc-800">Record your voice response</p>
+                      <p className="mt-2 text-sm text-zinc-500">Click the button below when you&apos;re ready to begin</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setShowVoiceIntroModal(true)}
-                      className="inline-flex items-center gap-2 rounded-xl bg-corePurple px-6 py-3 text-sm font-semibold text-white transition hover:brightness-105"
+                      className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-b from-corePurple to-[#4338ca] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(77,62,240,0.4)] transition hover:shadow-[0_6px_20px_rgba(77,62,240,0.45)] hover:-translate-y-0.5"
                     >
                       <Icon name="mic" className="h-5 w-5" />
                       Start recording
                     </button>
                   </>
                 ) : voiceState.countdown !== null && voiceState.countdown > 0 ? (
-                  <div className="flex flex-col items-center gap-6">
-                    <p className="text-sm text-zinc-600">
+                  <div className="flex flex-col items-center gap-8">
+                    <p className="max-w-sm text-center text-[15px] leading-relaxed text-zinc-600">
                       Take a moment to gather your thoughts. Recording will start automatically, or begin whenever you&apos;re ready.
                     </p>
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl font-medium tabular-nums text-zinc-400">{voiceState.countdown}s</span>
-                      <span className="text-sm text-zinc-400">to prepare</span>
+                    <div className="inline-flex items-center gap-3 rounded-full border border-zinc-200/80 bg-white/90 px-6 py-3 shadow-sm">
+                      <span className="text-3xl font-semibold tabular-nums tracking-tight text-zinc-800">{voiceState.countdown}</span>
+                      <span className="text-sm font-medium text-zinc-500">seconds to prepare</span>
                     </div>
                     <button
                       type="button"
@@ -760,43 +746,43 @@ export default function WorkspaceLayoutPage() {
                           [scenarioIndex]: { ...(prev[scenarioIndex] ?? voiceState), countdown: 0 },
                         }))
                       }
-                      className="inline-flex items-center gap-2 rounded-xl bg-corePurple px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-105"
+                      className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-b from-corePurple to-[#4338ca] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(77,62,240,0.4)] transition hover:shadow-[0_6px_20px_rgba(77,62,240,0.45)] hover:-translate-y-0.5"
                     >
-                      <Icon name="mic" className="h-4 w-4" />
+                      <Icon name="mic" className="h-5 w-5" />
                       Start recording now
                     </button>
                   </div>
                 ) : voiceState.stopped ? (
                   <div className="flex flex-col items-center gap-6">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-                      <svg className="h-8 w-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 to-emerald-50 shadow-[0_8px_24px_-8px_rgba(5,150,105,0.3)]">
+                      <svg className="h-10 w-10 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
-                    <p className="text-sm font-medium text-zinc-700">Recording saved</p>
+                    <p className="text-base font-semibold text-zinc-800">Recording saved</p>
                   </div>
                 ) : (
-                  <div className="flex w-full max-w-xs flex-col items-center gap-6">
-                    <div className="flex h-20 items-end justify-center gap-1.5">
+                  <div className="flex w-full max-w-xs flex-col items-center gap-8">
+                    <div className="flex h-24 items-end justify-center gap-2">
                       {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
                         <div
                           key={i}
-                          className="w-2 rounded-full bg-gradient-to-t from-corePurple to-violet origin-bottom"
+                          className="w-2.5 rounded-full bg-gradient-to-t from-corePurple to-violet origin-bottom shadow-sm"
                           style={{
-                            height: "32px",
+                            height: "36px",
                             animation: "voicewave 0.5s ease-in-out infinite alternate",
                             animationDelay: `${i * 0.06}s`,
                           }}
                         />
                       ))}
                     </div>
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <span className="relative flex h-3 w-3">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-                          <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
+                    <div className="flex flex-col items-center gap-5">
+                      <div className="inline-flex items-center gap-3 rounded-full bg-zinc-100/80 px-4 py-2">
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                         </span>
-                        <p className="text-sm font-medium text-zinc-700">Recording...</p>
+                        <p className="text-sm font-semibold text-zinc-700">Recording...</p>
                       </div>
                       <button
                         type="button"
@@ -806,7 +792,7 @@ export default function WorkspaceLayoutPage() {
                             [scenarioIndex]: { ...(prev[scenarioIndex] ?? voiceState), stopped: true },
                           }))
                         }
-                        className="rounded-xl border-2 border-red-200 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-100"
+                        className="rounded-xl bg-gradient-to-b from-red-500 to-red-600 px-8 py-3 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(239,68,68,0.35)] transition hover:shadow-[0_6px_20px_rgba(239,68,68,0.4)] hover:-translate-y-0.5"
                       >
                         Stop recording
                       </button>
