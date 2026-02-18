@@ -338,6 +338,7 @@ export default function WorkspaceLayoutPage() {
   const [cpTimeSeconds, setCpTimeSeconds] = React.useState(45 * 60);
   const [onshapeWorkspaceOpenByIndex, setOnshapeWorkspaceOpenByIndex] = React.useState<Record<number, boolean>>({});
   const [hasOpenedCadWorkspaceByIndex, setHasOpenedCadWorkspaceByIndex] = React.useState<Record<number, boolean>>({});
+  const [cadDesignSavedByIndex, setCadDesignSavedByIndex] = React.useState<Record<number, boolean>>({});
 
   const currentAnswers = answersByIndex[scenarioIndex] ?? getDefaultAnswers(scenario);
   const voiceState = voiceStateByIndex[scenarioIndex] ?? {
@@ -413,6 +414,7 @@ export default function WorkspaceLayoutPage() {
   const progress = Math.round(((scenarioIndex + 1) / scenarioTotal) * 100);
 
   const onshapeWorkspaceOpen = onshapeWorkspaceOpenByIndex[scenarioIndex] ?? false;
+  const isCadDesignSaved = cadDesignSavedByIndex[scenarioIndex] ?? false;
 
   if (isOnshape && isOnshapeScenario(scenario) && onshapeWorkspaceOpen) {
     return (
@@ -460,98 +462,117 @@ export default function WorkspaceLayoutPage() {
                   ← Back to question
                 </button>
               </div>
-              <section className="cp-section">
-                <h3 className="cp-h3">Objective</h3>
-                <p className="cp-p">
-                  Model the pneumatic nozzle component shown in the attached engineering drawing. Create a CAD part that matches the specified geometry, dimensions, and design intent.
-                </p>
-              </section>
 
-              <section className="cp-section">
-                <h3 className="cp-h3">Requirements</h3>
-                <ul className="cp-bullets">
-                  <li>Use the drawing as the primary source of truth for all dimensions and angles.</li>
-                  <li>Build the nozzle as a manufacturable part (turned body with hex feature).</li>
-                  <li>Match the following critical features:
-                    <ul className="cp-bullets cp-bullets-nested">
-                      <li>Main body diameter: Ø0.625 in</li>
-                      <li>Outlet diameters: Ø0.188 in and Ø0.292 in</li>
-                      <li>Tapered section lengths and angles (75° and 93.6°)</li>
-                      <li>Hex profile across flats: 0.361 in</li>
-                    </ul>
-                  </li>
-                  <li>Ensure sketch geometry is fully constrained and parametric.</li>
-                </ul>
-              </section>
-
-              <section className="cp-section">
-                <h3 className="cp-h3">Material + Assumptions</h3>
-                <div className="cp-kv">
-                  <div className="cp-kv-row"><span>Material</span><span className="cp-kv-val">Stainless Steel AISI 316 (per note on drawing)</span></div>
-                  <div className="cp-kv-row"><span>Units</span><span className="cp-kv-val">Inches</span></div>
-                </div>
-                <p className="cp-p cp-p-muted cp-mt">
-                  If any minor detail is missing or ambiguous, make a reasonable engineering assumption and document it.
-                </p>
-              </section>
-
-              <section className="cp-section border-2 border-corePurple/30 bg-gradient-to-br from-softLavender/50 to-corePurple/5 shadow-[0_0_0_1px_rgba(77,62,240,0.08)]">
-                <h3 className="cp-h3 flex items-center gap-2 text-base font-bold">
-                  <span className="flex h-6 w-6 items-center justify-center rounded bg-corePurple/20">
-                    <svg className="h-3.5 w-3.5 text-corePurple" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              {isCadDesignSaved ? (
+                <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                    <svg className="h-8 w-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </span>
-                  OnShape Login Credentials
-                </h3>
-                <p className="cp-p cp-p-muted mt-1 text-[11px]">Use these to log in to OnShape</p>
-                <div className="cp-kv mt-3 border-2 border-corePurple/15 bg-white/80">
-                  <div className="cp-kv-row flex items-center gap-2">
-                    <span className="shrink-0 font-semibold">Email</span>
-                    <span className="cp-kv-val min-w-0 truncate font-mono text-[12px]">applicant+11499@colare.co</span>
-                    <CopyButton value="applicant+11499@colare.co" />
                   </div>
-                  <div className="cp-kv-row flex items-center gap-2">
-                    <span className="font-semibold">Password</span>
-                    <span className="cp-kv-val font-mono text-[12px]">Applicant11499</span>
-                    <CopyButton value="Applicant11499" />
-                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-zinc-900">Design saved</h3>
+                  <p className="text-sm text-zinc-600">
+                    Please return to your Colare tab to proceed with the assessment.
+                  </p>
                 </div>
-                <div className="cp-p cp-mt flex items-start gap-2 rounded border-2 border-amber-300 bg-amber-100 px-3 py-2 text-[12px] font-semibold text-amber-900">
-                  <span className="shrink-0">!</span>
-                  Log in to OnShape with these credentials in the new tab that opened.
-                </div>
-              </section>
+              ) : (
+                <>
+                  <section className="cp-section">
+                    <h3 className="cp-h3">Objective</h3>
+                    <p className="cp-p">
+                      Model the pneumatic nozzle component shown in the attached engineering drawing. Create a CAD part that matches the specified geometry, dimensions, and design intent.
+                    </p>
+                  </section>
 
-              <section className="cp-section">
-                <h3 className="cp-h3">Reference</h3>
-                <p className="cp-p cp-p-muted text-[11px]">Air Nozzle — Rev A</p>
-                <div className="cp-mt overflow-hidden border border-zinc-200 bg-white">
-                  <Image
-                    src={scenario.imageUrl ?? "/nozzle-drawing.png"}
-                    alt="Air nozzle reference drawing"
-                    width={340}
-                    height={240}
-                    className="w-full object-contain"
-                  />
-                </div>
-                <p className="cp-p cp-p-muted cp-mt text-[11px]">Please refer to the tab &quot;Rev A&quot; beside the tab &quot;Colare Workspace&quot; for the full image.</p>
-              </section>
+                  <section className="cp-section">
+                    <h3 className="cp-h3">Requirements</h3>
+                    <ul className="cp-bullets">
+                      <li>Use the drawing as the primary source of truth for all dimensions and angles.</li>
+                      <li>Build the nozzle as a manufacturable part (turned body with hex feature).</li>
+                      <li>Match the following critical features:
+                        <ul className="cp-bullets cp-bullets-nested">
+                          <li>Main body diameter: Ø0.625 in</li>
+                          <li>Outlet diameters: Ø0.188 in and Ø0.292 in</li>
+                          <li>Tapered section lengths and angles (75° and 93.6°)</li>
+                          <li>Hex profile across flats: 0.361 in</li>
+                        </ul>
+                      </li>
+                      <li>Ensure sketch geometry is fully constrained and parametric.</li>
+                    </ul>
+                  </section>
 
-              <section className="cp-section cp-section-muted">
-                <h3 className="cp-h3">Tips</h3>
-                <ul className="cp-bullets">
-                  <li>Stay in the provided Part Studio and modify only required features.</li>
-                  <li>Prefer parametric constraints; avoid sketching freehand without dimensions.</li>
-                </ul>
-              </section>
+                  <section className="cp-section">
+                    <h3 className="cp-h3">Material + Assumptions</h3>
+                    <div className="cp-kv">
+                      <div className="cp-kv-row"><span>Material</span><span className="cp-kv-val">Stainless Steel AISI 316 (per note on drawing)</span></div>
+                      <div className="cp-kv-row"><span>Units</span><span className="cp-kv-val">Inches</span></div>
+                    </div>
+                    <p className="cp-p cp-p-muted cp-mt">
+                      If any minor detail is missing or ambiguous, make a reasonable engineering assumption and document it.
+                    </p>
+                  </section>
+
+                  <section className="cp-section border-2 border-corePurple/30 bg-gradient-to-br from-softLavender/50 to-corePurple/5 shadow-[0_0_0_1px_rgba(77,62,240,0.08)]">
+                    <h3 className="cp-h3 flex items-center gap-2 text-base font-bold">
+                      <span className="flex h-6 w-6 items-center justify-center rounded bg-corePurple/20">
+                        <svg className="h-3.5 w-3.5 text-corePurple" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                      </span>
+                      OnShape Login Credentials
+                    </h3>
+                    <p className="cp-p cp-p-muted mt-1 text-[11px]">Use these to log in to OnShape</p>
+                    <div className="cp-kv mt-3 border-2 border-corePurple/15 bg-white/80">
+                      <div className="cp-kv-row flex items-center gap-2">
+                        <span className="shrink-0 font-semibold">Email</span>
+                        <span className="cp-kv-val min-w-0 truncate font-mono text-[12px]">applicant+11499@colare.co</span>
+                        <CopyButton value="applicant+11499@colare.co" />
+                      </div>
+                      <div className="cp-kv-row flex items-center gap-2">
+                        <span className="font-semibold">Password</span>
+                        <span className="cp-kv-val font-mono text-[12px]">Applicant11499</span>
+                        <CopyButton value="Applicant11499" />
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="cp-section">
+                    <h3 className="cp-h3">Reference</h3>
+                    <p className="cp-p cp-p-muted text-[11px]">Air Nozzle — Rev A</p>
+                    <div className="cp-mt overflow-hidden border border-zinc-200 bg-white">
+                      <Image
+                        src={scenario.imageUrl ?? "/nozzle-drawing.png"}
+                        alt="Air nozzle reference drawing"
+                        width={340}
+                        height={240}
+                        className="w-full object-contain"
+                      />
+                    </div>
+                    <p className="cp-p cp-p-muted cp-mt text-[11px]">Please refer to the tab &quot;Rev A&quot; beside the tab &quot;Colare Workspace&quot; for the full image.</p>
+                  </section>
+
+                  <section className="cp-section cp-section-muted">
+                    <h3 className="cp-h3">Tips</h3>
+                    <ul className="cp-bullets">
+                      <li>Stay in the provided Part Studio and modify only required features.</li>
+                      <li>Prefer parametric constraints; avoid sketching freehand without dimensions.</li>
+                    </ul>
+                  </section>
+                </>
+              )}
             </div>
 
-            <div className="cp-footer">
-              <button type="button" className="cp-btn cp-btn-primary" onClick={goNext}>
-                ✓ Submit CAD Design
-              </button>
-            </div>
+            {!isCadDesignSaved && (
+              <div className="cp-footer">
+                <button
+                  type="button"
+                  className="cp-btn cp-btn-primary"
+                  onClick={() => setCadDesignSavedByIndex((prev) => ({ ...prev, [scenarioIndex]: true }))}
+                >
+                  ✓ Save CAD design
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -637,7 +658,9 @@ export default function WorkspaceLayoutPage() {
                   setOnshapeWorkspaceOpenByIndex((prev) => ({ ...prev, [scenarioIndex]: true }));
                 }}
                 className={`mt-2 inline-flex w-full min-w-[240px] items-center justify-center gap-2.5 rounded-xl px-8 py-4 text-base font-semibold shadow transition ${
-                  hasOpenedCadWorkspaceByIndex[scenarioIndex]
+                  isCadDesignSaved
+                    ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                    : hasOpenedCadWorkspaceByIndex[scenarioIndex]
                     ? "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                     : "bg-gradient-to-b from-corePurple to-[#4338ca] text-white shadow-[0_4px_14px_rgba(77,62,240,0.4)] hover:shadow-[0_6px_20px_rgba(77,62,240,0.45)] hover:-translate-y-0.5"
                 }`}
@@ -647,7 +670,11 @@ export default function WorkspaceLayoutPage() {
                   <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                   <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
-                {hasOpenedCadWorkspaceByIndex[scenarioIndex] ? "CAD workspace open" : "Open CAD workspace"}
+                {isCadDesignSaved
+                  ? "CAD design saved"
+                  : hasOpenedCadWorkspaceByIndex[scenarioIndex]
+                  ? "CAD workspace open"
+                  : "Open CAD workspace"}
               </button>
             </div>
 
