@@ -160,6 +160,11 @@ Use the drawing as the primary source of truth. Build as a manufacturable part (
 
 function Icon({ name, className }: { name: string; className?: string }) {
   const icons: Record<string, React.ReactNode> = {
+    play: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+        <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none" />
+      </svg>
+    ),
     sparkles: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
@@ -247,6 +252,66 @@ function isOnshapeScenario(s: Scenario): s is OnshapeScenario {
   return s.type === "onshape";
 }
 
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const copy = () => {
+    void navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      aria-label="Copy"
+      className="shrink-0 rounded p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700"
+    >
+      {copied ? (
+        <svg className="h-4 w-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+function OnshapeCredentialsSection() {
+  return (
+    <section className="rounded-2xl border-2 border-corePurple/40 bg-gradient-to-br from-softLavender/60 to-corePurple/10 p-5 shadow-[0_0_0_1px_rgba(77,62,240,0.1),0_4px_12px_rgba(77,62,240,0.08)]">
+      <h3 className="flex items-center gap-2 text-base font-bold text-zinc-900">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-corePurple/20">
+          <svg className="h-4 w-4 text-corePurple" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+        </span>
+        OnShape Login Credentials
+      </h3>
+      <p className="mt-1 text-xs font-medium text-zinc-600">Use these to log in to OnShape in the new tab</p>
+      <div className="mt-4 space-y-3 rounded-xl border-2 border-corePurple/20 bg-white/90 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-zinc-700">Email</span>
+          <span className="min-w-0 flex-1 truncate text-right font-mono text-sm font-semibold text-zinc-900">applicant+11499@colare.co</span>
+          <CopyButton value="applicant+11499@colare.co" />
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm font-semibold text-zinc-700">Password</span>
+          <span className="flex-1 text-right font-mono text-sm font-semibold text-zinc-900">Applicant11499</span>
+          <CopyButton value="Applicant11499" />
+        </div>
+      </div>
+      <div className="mt-4 flex items-start gap-2 rounded-lg border-2 border-amber-300 bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-900">
+        <span className="shrink-0 text-amber-600">!</span>
+        <span>Log in to OnShape with these credentials in the new tab that opened.</span>
+      </div>
+    </section>
+  );
+}
+
 export default function WorkspaceLayoutPage() {
   const params = useParams<{ testId: string }>();
   const router = useRouter();
@@ -276,6 +341,8 @@ export default function WorkspaceLayoutPage() {
   const [showVoiceIntroModal, setShowVoiceIntroModal] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<"answer" | "notes">("answer");
   const [cpTimeSeconds, setCpTimeSeconds] = React.useState(45 * 60);
+  const [onshapeWorkspaceOpenByIndex, setOnshapeWorkspaceOpenByIndex] = React.useState<Record<number, boolean>>({});
+  const [hasOpenedCadWorkspaceByIndex, setHasOpenedCadWorkspaceByIndex] = React.useState<Record<number, boolean>>({});
 
   const currentAnswers = answersByIndex[scenarioIndex] ?? getDefaultAnswers(scenario);
   const voiceState = voiceStateByIndex[scenarioIndex] ?? {
@@ -350,7 +417,9 @@ export default function WorkspaceLayoutPage() {
   const isLastQuestion = scenarioIndex === scenarioTotal - 1;
   const progress = Math.round(((scenarioIndex + 1) / scenarioTotal) * 100);
 
-  if (isOnshape && isOnshapeScenario(scenario)) {
+  const onshapeWorkspaceOpen = onshapeWorkspaceOpenByIndex[scenarioIndex] ?? false;
+
+  if (isOnshape && isOnshapeScenario(scenario) && onshapeWorkspaceOpen) {
     return (
       <div className="relative h-screen overflow-hidden bg-[#e8e8e8]">
         {/* Full-screen backdrop: Onshape screenshot */}
@@ -387,6 +456,15 @@ export default function WorkspaceLayoutPage() {
 
             {/* Scrollable content */}
             <div className="cp-body">
+              <div className="cp-section">
+                <button
+                  type="button"
+                  onClick={() => setOnshapeWorkspaceOpenByIndex((prev) => ({ ...prev, [scenarioIndex]: false }))}
+                  className="cp-link text-left"
+                >
+                  ← Back to question
+                </button>
+              </div>
               <section className="cp-section">
                 <h3 className="cp-h3">Objective</h3>
                 <p className="cp-p">
@@ -422,26 +500,47 @@ export default function WorkspaceLayoutPage() {
                 </p>
               </section>
 
+              <section className="cp-section border-2 border-corePurple/30 bg-gradient-to-br from-softLavender/50 to-corePurple/5 shadow-[0_0_0_1px_rgba(77,62,240,0.08)]">
+                <h3 className="cp-h3 flex items-center gap-2 text-base font-bold">
+                  <span className="flex h-6 w-6 items-center justify-center rounded bg-corePurple/20">
+                    <svg className="h-3.5 w-3.5 text-corePurple" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </span>
+                  OnShape Login Credentials
+                </h3>
+                <p className="cp-p cp-p-muted mt-1 text-[11px]">Use these to log in to OnShape</p>
+                <div className="cp-kv mt-3 border-2 border-corePurple/15 bg-white/80">
+                  <div className="cp-kv-row flex items-center gap-2">
+                    <span className="shrink-0 font-semibold">Email</span>
+                    <span className="cp-kv-val min-w-0 truncate font-mono text-[12px]">applicant+11499@colare.co</span>
+                    <CopyButton value="applicant+11499@colare.co" />
+                  </div>
+                  <div className="cp-kv-row flex items-center gap-2">
+                    <span className="font-semibold">Password</span>
+                    <span className="cp-kv-val font-mono text-[12px]">Applicant11499</span>
+                    <CopyButton value="Applicant11499" />
+                  </div>
+                </div>
+                <div className="cp-p cp-mt flex items-start gap-2 rounded border-2 border-amber-300 bg-amber-100 px-3 py-2 text-[12px] font-semibold text-amber-900">
+                  <span className="shrink-0">!</span>
+                  Log in to OnShape with these credentials in the new tab that opened.
+                </div>
+              </section>
+
               <section className="cp-section">
-                <div className="cp-section-row">
-                  <h3 className="cp-h3">Reference</h3>
-                  <button type="button" className="cp-link">Open</button>
+                <h3 className="cp-h3">Reference</h3>
+                <p className="cp-p cp-p-muted text-[11px]">Air Nozzle — Rev A</p>
+                <div className="cp-mt overflow-hidden border border-zinc-200 bg-white">
+                  <Image
+                    src={scenario.imageUrl ?? "/nozzle-drawing.png"}
+                    alt="Air nozzle reference drawing"
+                    width={340}
+                    height={240}
+                    className="w-full object-contain"
+                  />
                 </div>
-                <div className="cp-ref">
-                  <div className="cp-ref-thumb" role="img" aria-label="Reference drawing preview">
-                    <Image
-                      src={scenario.imageUrl ?? "/nozzle-drawing.png"}
-                      alt="Air nozzle reference"
-                      width={96}
-                      height={72}
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                  <div className="cp-ref-meta">
-                    <div className="cp-ref-title">Air Nozzle — Rev A</div>
-                    <div className="cp-ref-sub">Please refer to the tab &quot;Rev A&quot; beside the tab &quot;Colare Workspace&quot; for the full image.</div>
-                  </div>
-                </div>
+                <p className="cp-p cp-p-muted cp-mt text-[11px]">Please refer to the tab &quot;Rev A&quot; beside the tab &quot;Colare Workspace&quot; for the full image.</p>
               </section>
 
               <section className="cp-section cp-section-muted">
@@ -530,8 +629,23 @@ export default function WorkspaceLayoutPage() {
           </div>
           <div className="h-[calc(100vh-160px)] overflow-y-auto p-4">
             <div className="space-y-5">
+              {isOnshape && isOnshapeScenario(scenario) && !onshapeWorkspaceOpen ? (
+                <>
+                  <div className="space-y-4 text-sm text-zinc-600">
+                    <p className="font-medium text-zinc-900">Welcome to your CAD simulation assessment.</p>
+                    <p>
+                      This exercise evaluates your ability to interpret an engineering drawing and model a manufacturable component in a professional CAD environment. All task details and submission instructions are provided inside the workspace.
+                    </p>
+                    <p>Please use the login credentials below to access your CAD design environment. When you&apos;re ready, click &quot;Open CAD workspace&quot; on the right to begin.</p>
+                  </div>
+
+                  <OnshapeCredentialsSection />
+                </>
+              ) : (
+                <>
               <p className="whitespace-pre-line text-sm text-zinc-600">{scenario.description}</p>
 
+              {"constraints" in scenario && scenario.constraints && scenario.constraints.length > 0 && (
               <div className="rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4">
                 <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Context & constraints</div>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -543,6 +657,7 @@ export default function WorkspaceLayoutPage() {
                   ))}
                 </div>
               </div>
+              )}
 
               {"imageUrl" in scenario && scenario.imageUrl && (
                 <div className="space-y-2">
@@ -575,6 +690,7 @@ export default function WorkspaceLayoutPage() {
                 </div>
               )}
 
+              {"taskText" in scenario && scenario.taskText && (
               <div className="rounded-2xl border border-zinc-200 p-4">
                 <div className="text-sm font-semibold text-zinc-900">Task</div>
                 <p className="mt-1 text-sm text-zinc-600">{scenario.taskText}</p>
@@ -590,6 +706,9 @@ export default function WorkspaceLayoutPage() {
                   </div>
                 </div>
               </div>
+              )}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -601,15 +720,51 @@ export default function WorkspaceLayoutPage() {
               <div>
                 <div className="text-sm font-semibold text-zinc-900">Your workspace</div>
                 <div className="text-xs text-zinc-500">
-                  {isVoice ? "Record your verbal response" : "Decision + rationale + notes"}
+                  {isOnshape && !onshapeWorkspaceOpen ? "Open CAD workspace to begin" : isVoice ? "Record your verbal response" : "Decision + rationale + notes"}
                 </div>
               </div>
               {isMcq && <span className="rounded-full border border-zinc-200 px-2 py-0.5 text-xs text-zinc-500">Autosaved</span>}
             </div>
           </div>
 
-          <div className="p-4">
-            {isMcq ? (
+          <div className="h-[calc(100vh-160px)] overflow-y-auto p-4">
+            {isOnshape && isOnshapeScenario(scenario) && !onshapeWorkspaceOpen ? (
+              <div className="flex flex-col gap-6">
+                {/* CTA block */}
+                <div className="flex flex-col items-center gap-6 rounded-2xl bg-gradient-to-b from-zinc-50/80 to-white p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-corePurple/20 to-violet/10 shadow-[0_8px_32px_-8px_rgba(77,62,240,0.25)]">
+                    <svg className="h-10 w-10 text-corePurple" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                      <line x1="12" y1="22.08" x2="12" y2="12" />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-base font-semibold text-zinc-800">CAD design task</p>
+                    <p className="mt-1 text-sm text-zinc-500">Click the button below to open the Onshape workspace and begin your design</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setHasOpenedCadWorkspaceByIndex((prev) => ({ ...prev, [scenarioIndex]: true }));
+                      setOnshapeWorkspaceOpenByIndex((prev) => ({ ...prev, [scenarioIndex]: true }));
+                    }}
+                    className={`inline-flex w-full items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold shadow transition ${
+                      hasOpenedCadWorkspaceByIndex[scenarioIndex]
+                        ? "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                        : "bg-gradient-to-b from-corePurple to-[#4338ca] text-white shadow-[0_4px_14px_rgba(77,62,240,0.4)] hover:shadow-[0_6px_20px_rgba(77,62,240,0.45)] hover:-translate-y-0.5"
+                    }`}
+                  >
+                    <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                      <line x1="12" y1="22.08" x2="12" y2="12" />
+                    </svg>
+                    {hasOpenedCadWorkspaceByIndex[scenarioIndex] ? "CAD workspace open" : "Open CAD workspace"}
+                  </button>
+                </div>
+              </div>
+            ) : isMcq ? (
               <>
                 <div className="mb-3 flex gap-1 rounded-xl border border-zinc-200 p-1">
                   <button
@@ -803,6 +958,7 @@ export default function WorkspaceLayoutPage() {
             )}
           </div>
         </div>
+
 
         {isVoice && showVoiceIntroModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4" aria-modal="true" role="dialog">
