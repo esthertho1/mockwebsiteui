@@ -114,7 +114,6 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: IconGrid },
   { href: "/tests", label: "Tests", icon: IconBriefcase },
   { href: "/candidates", label: "Candidates", icon: IconUsers },
-  { href: "/settings", label: "Settings", icon: IconGear },
 ];
 
 function initials(name: string) {

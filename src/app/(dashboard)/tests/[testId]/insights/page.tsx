@@ -131,9 +131,6 @@ export default function InsightsPage() {
             <TabLink href={`/tests/${testId}/insights`} active>
               Insights
             </TabLink>
-            <TabLink href={`/tests/${testId}/settings`} active={false}>
-              Settings
-            </TabLink>
           </div>
         </div>
 

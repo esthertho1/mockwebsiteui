@@ -536,9 +536,6 @@ For any technical queries, please refer to FAQ or contact support. For other inq
             <TabLink href={`/tests/${testId}/insights`} active={false}>
               Insights
             </TabLink>
-            <TabLink href={`/tests/${testId}/settings`} active={false}>
-              Settings
-            </TabLink>
           </div>
         </div>
 
@@ -1463,12 +1460,6 @@ For any technical queries, please refer to FAQ or contact support. For other inq
                         </button>
                       </div>
 
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-900 hover:underline"
-                      >
-                        <span className="text-lg leading-none">＋</span> Create Interview
-                      </button>
                     </div>
                   </div>
                 </div>

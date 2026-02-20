@@ -188,12 +188,6 @@ export default function TestsListPage() {
               <option>Draft</option>
               <option>Closed</option>
             </select>
-            <Link
-              href="/create-test"
-              className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-corePurple px-4 text-sm font-semibold text-white hover:bg-violet"
-            >
-              + Create Test
-            </Link>
           </div>
         </div>
 

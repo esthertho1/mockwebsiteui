@@ -223,14 +223,6 @@ export default function DashboardPage() {
                 </Link>
               ))}
             </div>
-            <div className="border-t border-zinc-100 px-6 py-4">
-              <Link
-                href="/create-test"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-softLavender py-3 text-sm font-semibold text-corePurple transition hover:bg-corePurple hover:text-white"
-              >
-                + Create test
-              </Link>
-            </div>
           </div>
 
           {/* Recent candidates — secondary */}
